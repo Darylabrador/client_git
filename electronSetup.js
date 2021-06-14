@@ -1,14 +1,14 @@
-const path          = require('path');
-const express       = require('express');
-const expressApp    = express();
-const http          = require('http').Server(expressApp);
-const database      = require('./config/database');
-const session       = require('express-session');
-const flash         = require('connect-flash');
-const bcrypt        = require('bcryptjs');
+const path = require('path');
+const express = require('express');
+const expressApp = express();
+const http = require('http').Server(expressApp);
+const database = require('./config/database');
+const session = require('express-session');
+const flash = require('connect-flash');
+const bcrypt = require('bcryptjs');
 
 // Get all models
-
+const User = require('./models/User');
 
 // Routes handler
 const GeneralRoutes = require('./routes/index');
@@ -29,16 +29,19 @@ function start(callback) {
         init(function () {
             loadRoutes(function () {
                 // setup relations
-                // database connection and sync
 
-                // starting web server
-                http.listen(3000, function () {
-                    console.log('Application is running on port 3000');
-                    router.isStarted = true;
-                    if (typeof callback != 'undefined') {
-                        callback();
-                    }
-                });
+                // database connection and sync
+                database.sync()
+                    .then(result => {
+                        // starting web server
+                        http.listen(3000, function () {
+                            console.log('Application is running on port 3000');
+                            router.isStarted = true;
+                            if (typeof callback != 'undefined') {
+                                callback();
+                            }
+                        });
+                    });
             });
         });
     } else {
