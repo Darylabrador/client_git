@@ -1,8 +1,153 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+@import url("https://fonts.googleapis.com/css?family=Oswald|Playfair+Display&display=swap");
+/* ------ GENERAL ----- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  height: 100%;
+  -webkit-user-select: none;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 a {
-  color: #00B7FF;
+  text-decoration: none !important;
 }
+
+nav {
+  -webkit-app-region: drag;
+  z-index: 1500 !important;
+  position: fixed !important;
+}
+
+#titleApp {
+  font-size: 13px !important;
+}
+
+.btn {
+  padding-top: 0 !important;
+  padding-bottom: 5px !important;
+  outline: none !important;
+  border: none !important;
+  cursor: default !important;
+  -webkit-app-region: no-drag;
+}
+.btn:focus, .btn:active {
+  outline: none !important;
+  box-shadow: none;
+}
+.btn.btnDashboard {
+  background-color: #5498f8e2;
+  transition: all 500 ease-in;
+  font-weight: bold !important;
+}
+.btn.btnDashboard:hover {
+  background-color: white !important;
+  color: #002252 !important;
+}
+
+.btn-window {
+  background-color: transparent !important;
+  color: #fff !important;
+  font-weight: normal !important;
+  width: 45px !important;
+}
+.btn-window:hover {
+  background-color: #002252 !important;
+}
+.btn-window.btnClose:hover {
+  background-color: red !important;
+}
+
+.form-control:focus {
+  border-style: none none inset none !important;
+  box-shadow: none !important;
+}
+
+/* --------- CUSTOM SIDENAV --------- */
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 50 !important;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  padding-top: 100px;
+}
+.sidenav #logoutContainer {
+  position: absolute !important;
+  bottom: 0 !important;
+  margin-bottom: 20px !important;
+}
+.sidenav a, .sidenav .dropdown-btn {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 16px;
+  color: #ffffff;
+  display: block;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
+.sidenav a:hover, .sidenav .dropdown-btn:hover {
+  color: #afd8ff;
+}
+
+.dropdown-container {
+  display: none;
+  background-color: #283E59;
+  padding-left: 8px;
+  color: #fff !important;
+  border-left: 3px solid #3B5374 !important;
+  border-right: 5px solid #3B5374 !important;
+}
+.dropdown-container a {
+  font-size: 14px !important;
+}
+
+.main {
+  margin-left: 200px;
+  padding: 10px 10px;
+  height: 100% !important;
+}
+
+/* ----- Log out button ----- */
+#btnLogout {
+  color: white !important;
+  transition: all 500 ease-in;
+}
+#btnLogout:hover {
+  color: #383dd1 !important;
+  font-weight: bold;
+}
+#btnLogout:hover .iconify {
+  color: #383dd1 !important;
+}
+
+/* --------- CUSTOM SCROLLBAR --------- */
+/* width */
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #3B5374;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #002252;
+}
+
+/*# sourceMappingURL=style.css.map */

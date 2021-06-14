@@ -2,22 +2,61 @@
   </head>
 
   <body>
-    <div class="container-fluid">
+    <nav class="w-100 row no-gutters border-bottom border-light bg-secondary m-0">
+      <div class="col-2 pt-2 pl-4">
+        <h6 id="titleApp" class="text-white"> GitClient </h6>
+      </div>
+      <div class="d-flex justify-content-end col-10">
+        <button id="minimize" class="btn btn-window rounded-0" style="padding: 5px !important;">
+          <svg width="10" height="2" viewBox="0 0 20 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H20V2H0V0Z" fill="white" />
+          </svg>
+        </button>
 
-      <div class="row no-gutters justify-content-around">
-        <div class="card" style="width: 25rem;">
-          <div class="card-body">
-            <h5 class="card-title">Ouvrir un projet git existant</h5>
-            <div class="d-flex justify-content-end">
-              <button id="openFolder" type="button" class="btn mx-4 btn-primary">Ouvrir</button>
-            </div>
-          </div>
+        <button id="maximize" class="btn btn-window rounded-0">
+          <span class="iconify" data-inline="false" data-icon="clarity:window-max-line"
+            style="font-size: 20px; color: #fff;"></span>
+        </button>
+
+        <button id="close" class="btn btn-window rounded-0 btnClose">
+          <span class="iconify" data-inline="false" data-icon="ant-design:close-outlined"
+            style="font-size: 16px; color: #fff;"></span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="sidenav bg-secondary">
+      <h6 id="directoryNameDisplay" class="text-center fw-bold">Choisir le projet git</h6>
+
+      <div class="my-2">
+        <div class="d-flex justify-content-center">
+          <button id="openFolder" type="button" class="btn py-0 px-3 btn-dark btn-sm">Ouvrir</button>
         </div>
-
-        <div id="resultat" class="my-5 border container-fluid"></div>
       </div>
 
-      <script type="module" src="/js/script.js"></script>
+      <div class="text-center w-100" id="logoutContainer">
+        <button id="btnLogout" class="d-flex btn justify-content-center align-items-center w-75 mx-auto py-0 my-0">
+          <div class="mr-2">
+            <span class="iconify" data-inline="false" data-icon="gg:log-off"
+              style="font-size: 17px; color: #fff; margin-top: -4px !important;"></span>
+          </div>
+          <div>
+            <p class="my-0 py-0" style="font-size: 12px !important;"> Deconnexion </p>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <div class="main pt-5 bg-dark">
+      <div id="loading" class="d-flex justify-content-center align-items-center d-none" style="height: 100% !important;">
+        <div class="spinner-border text-light" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/js/script.js"></script>
+    <script type="module" src="/js/menuHandlerElectron.js"></script>
   </body>
 
   </html>

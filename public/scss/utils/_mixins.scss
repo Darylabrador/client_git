@@ -1,0 +1,17 @@
+@use 'colors';
+
+@mixin formButton {
+    font-weight: bold;
+    border: none !important;
+    background: rgba(0, 34, 82, 0.5);
+    color: #fff !important;
+    transition: all 400 ease-in;
+
+    &:hover{
+      background: rgba(0, 34, 82, 0.7);
+    }
+}
+
+@mixin fontTitre($font1, $font2) {
+  font-family: $font1,$font2;
+}
