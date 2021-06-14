@@ -1,15 +1,23 @@
+import FileTree from '../../utils/FileTree.js';
+const remote = require('electron').remote;
+const { dialog } = remote;
+
 window.addEventListener('DOMContentLoaded', (event) => {
-    let reinitOpenFormBtn = document.getElementById('reinit1');
-    let reinitStructureFormBtn = document.getElementById('reinit2');
+    let req = new XMLHttpRequest();
+    let method, data;
 
-    let formOpenProject = document.getElementById('formOpenProject');
-    let formShowStructure = document.getElementById('formShowStructure');
+    let openFolder = document.getElementById("openFolder");
 
-    reinitOpenFormBtn.addEventListener('click', evt => {
-        formOpenProject.reset();
-    })
-
-    reinitStructureFormBtn.addEventListener('click', evt => {
-        formShowStructure.reset();
+    openFolder.addEventListener("click",  async (evt) => {
+        try {
+            var directory = await dialog.showOpenDialog({ properties: ['openDirectory'] });
+            var fileTree = new FileTree(directory.filePaths[0]);
+            fileTree.build();
+            console.log(fileTree);
+            
+        } catch (error) {
+            console.log(error)
+        }
+ 
     })
 });

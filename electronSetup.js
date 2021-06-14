@@ -7,12 +7,14 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const bcrypt = require('bcryptjs');
 
+
 // Get all models
 const User = require('./models/User');
 
 // Routes handler
 const GeneralRoutes = require('./routes/index');
-const GitRoutes  = require("./routes/gitRoutes");
+const GitRoutes = require("./routes/gitRoutes");
+
 
 /* variable initialisation's */
 const router = {
@@ -59,13 +61,14 @@ function start(callback) {
 * @param {*} callback 
 */
 function init(callback) {
+
     /** view engine setup*/
     expressApp.set('views', path.join(__dirname, 'views'));
     expressApp.set('view engine', 'ejs');
     expressApp.use(express.json());
     expressApp.use(express.urlencoded({ extended: false }));
     expressApp.use(express.static(path.join(__dirname, 'public')));
-    expressApp.use("/repos", express.static(path.join(__dirname, 'repos')));
+    expressApp.use('/utils', express.static(path.join(__dirname, 'utils')));
 
     /** middleware setup */
     expressApp.use(
@@ -84,7 +87,6 @@ function init(callback) {
     /** flash message middleware */
     expressApp.use(flash());
 
-
     /** flash message datas */
     expressApp.use((req, res, next) => {
         res.locals.success_message = req.flash('success');
@@ -92,7 +94,7 @@ function init(callback) {
         next();
     });
 
-    
+
     /* Keep server down */
     router.isStarted = false;
     if (typeof callback != 'undefined') {
@@ -106,11 +108,10 @@ function init(callback) {
  * @param {*} callback 
  */
 function loadRoutes(callback) {
-
     // Defines routes
     expressApp.use('/', GeneralRoutes);
     expressApp.use(GitRoutes);
-    
+
     if (typeof callback != 'undefined') {
         callback();
     }

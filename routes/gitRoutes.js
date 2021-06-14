@@ -27,30 +27,8 @@ router.post(
         body('gitUrl', 'URL Obligatoire')
         .not()
         .isEmpty()
-        .isURL(),
     ],
     gitController.openProject
-);
-
-
-/**
- * Show git folder structure
- * 
- * @name displayStructure POST
- * @function
- * @memberof module:router/git
- * @param {string} '/show/structure' - uri
- * @param {function} gitController.displayStructure
- */
-router.post(
-    "/show/structure", 
-    [
-        body('gitUrl', 'URL Obligatoire')
-        .not()
-        .isEmpty()
-        .isURL(),
-    ],
-    gitController.displayStructure
 );
 
 module.exports = router;

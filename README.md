@@ -16,3 +16,7 @@
 ## Documentations
 
 To generate the documentation, you can use this following command : npm run doc
+
+## resource : 
+
+- https://jakelunn.medium.com/simple-file-tree-electron-es6-71e8abc2c52
