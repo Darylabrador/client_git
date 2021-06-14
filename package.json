@@ -1,0 +1,32 @@
+{
+  "name": "client-git",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "electron ./app.js",
+    "elecdev": "electromon ./app.js",
+    "sass": "sass --watch ./public/scss/base/style.scss:./public/css/style.css",
+    "compressed": "sass ./public/scss/base/style.scss:./public/css/style.css --style compressed",
+    "doc": "./node_modules/.bin/jsdoc -c ./jsdoc-conf.json"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "ejs": "~2.6.1",
+    "electron": "^13.1.2",
+    "express": "~4.16.1",
+    "express-session": "^1.17.2",
+    "express-validator": "^6.11.1",
+    "http-errors": "~1.6.3",
+    "jsdoc": "^3.6.7",
+    "morgan": "~1.9.1",
+    "sequelize": "^6.6.2",
+    "sqlite3": "^5.0.2",
+    "validator": "^13.6.0"
+  },
+  "devDependencies": {
+    "electromon": "^1.0.10"
+  }
+}
