@@ -12,6 +12,7 @@ const User = require('./models/User');
 
 // Routes handler
 const GeneralRoutes = require('./routes/index');
+const GitRoutes  = require("./routes/gitRoutes");
 
 /* variable initialisation's */
 const router = {
@@ -64,7 +65,34 @@ function init(callback) {
     expressApp.use(express.json());
     expressApp.use(express.urlencoded({ extended: false }));
     expressApp.use(express.static(path.join(__dirname, 'public')));
+    expressApp.use("/repos", express.static(path.join(__dirname, 'repos')));
 
+    /** middleware setup */
+    expressApp.use(
+        session({
+            name: 'gitClientCookie',
+            secret: 'H9PDdYSllyYrSmX8Ag1fAodE2HRuyTfWb8SwYwjhEfUbGgB6Q2Po2iPZxLj9',
+            resave: false,
+            saveUninitialized: false,
+            cookie: {
+                sameSite: true,
+                maxAge: 3600 * 1000 * 3
+            }
+        })
+    );
+
+    /** flash message middleware */
+    expressApp.use(flash());
+
+
+    /** flash message datas */
+    expressApp.use((req, res, next) => {
+        res.locals.success_message = req.flash('success');
+        res.locals.error_message = req.flash('error');
+        next();
+    });
+
+    
     /* Keep server down */
     router.isStarted = false;
     if (typeof callback != 'undefined') {
@@ -81,7 +109,8 @@ function loadRoutes(callback) {
 
     // Defines routes
     expressApp.use('/', GeneralRoutes);
-
+    expressApp.use(GitRoutes);
+    
     if (typeof callback != 'undefined') {
         callback();
     }

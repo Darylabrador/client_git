@@ -1,11 +1,43 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/css/style.css' />
+<% include includes/head %>
   </head>
+
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <div class="container-fluid">
+
+      <div class="row no-gutters justify-content-around">
+        <div class="card" style="width: 25rem;">
+          <div class="card-body">
+            <h5 class="card-title">Ouvrir un projet git</h5>
+            <form id="formOpenProject" method="POST" action="/open/project">
+              <div class="form-group my-3">
+                <input type="url" name="gitUrl" class="form-control" placeholder="Saisir l'url du projet git">
+              </div>
+              <div class="d-flex justify-content-end">
+                <button id="reinit1" type="button" class="btn mx-4 btn-secondary">Réinitialiser</button>
+                <button type="submit" class="btn btn-primary">Valider</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card" style="width: 25rem;">
+          <div class="card-body">
+            <h5 class="card-title">Afficher la structure du projet git</h5>
+            <form id="formShowStructure" method="POST" action="/show/structure">
+              <div class="form-group my-3">
+                <input type="url" name="gitUrl" class="form-control" placeholder="Saisir l'url du projet git">
+              </div>
+              <div class="d-flex justify-content-end">
+                <button id="reinit2" type="button" class="btn mx-4 btn-secondary">Réinitialiser</button>
+                <button type="submit" class="btn btn-primary">Valider</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="/js/script.js"></script>
   </body>
-</html>
+  </html>

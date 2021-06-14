@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "start": "electron ./app.js",
-    "elecdev": "electromon ./app.js",
-    "sass": "sass --watch ./public/scss/base/style.scss:./public/css/style.css",
-    "compressed": "sass ./public/scss/base/style.scss:./public/css/style.css --style compressed",
+    "dev": "electromon ./app.js",
+    "sass": "sass --watch ./public/scss/style.scss:./public/css/style.css",
+    "compressed": "sass ./public/scss/style.scss:./public/css/style.css --style compressed",
     "doc": "./node_modules/.bin/jsdoc -c ./jsdoc-conf.json"
   },
   "dependencies": {
@@ -20,9 +20,11 @@
     "express-session": "^1.17.2",
     "express-validator": "^6.11.1",
     "http-errors": "~1.6.3",
+    "jquery": "^3.6.0",
     "jsdoc": "^3.6.7",
     "morgan": "~1.9.1",
     "sequelize": "^6.6.2",
+    "simple-git": "^2.39.1",
     "sqlite3": "^5.0.2",
     "validator": "^13.6.0"
   },
