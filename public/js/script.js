@@ -12,6 +12,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     let gitCommand = document.getElementById('gitCommand');
     let pushCommand = document.getElementById('pushCommand');
     let pullCommand = document.getElementById('pullCommand');
+    let commitCommand = document.getElementById('commitCommand');
 
     let fileName = document.getElementById('fileName');
     let defaultFileName = "Aucun fichier sélectionner";
@@ -22,6 +23,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
     let invalideFolder = document.getElementById("invalideFolder");
     let openFolder = document.getElementById("openFolder");
     let folderContent = document.getElementById('folderContent');
+
+    let displayMessage = document.getElementById('displayMessage');
 
     const setDirectoryName = (directoryName) => {
         directoryNameDisplay.textContent = directoryName;
@@ -190,6 +193,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
     let commitMsg = document.getElementById("commitMsg");
 
     var modalCommit = new bootstrap.Modal(document.getElementById('exampleModal'))
+    var modalResult = new bootstrap.Modal(document.getElementById('modalResult'))
+
+    commitCommand.addEventListener('click', evt => {
+        evt.stopPropagation();
+        commitCommand.setAttribute('disabled', true);
+    });
 
     sendCommitBtn.addEventListener('click', evt => {
         evt.stopPropagation();
@@ -205,7 +214,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 if (req.readyState === XMLHttpRequest.DONE) {
                     if (req.status === 200) {
                         let reponse = req.response;
-                        modalCommit.toggle();
+                        if(reponse.message) {
+                            displayMessage.textContent = reponse.message;
+                            modalResult.show();
+                            modalCommit.hide();
+                        }
                     }
                 }
             }
@@ -214,6 +227,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     pushCommand.addEventListener('click', evt => {
         evt.stopPropagation();
+        pushCommand.setAttribute('disabled', true);
+
         method = "POST";
         req.open(method, "/push");
         req.responseType = "json";
@@ -223,7 +238,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
             if (req.readyState === XMLHttpRequest.DONE) {
                 if (req.status === 200) {
                     let reponse = req.response;
-                    console.log(reponse)
+                    if(reponse.message) {
+                        displayMessage.textContent = reponse.message;
+                        modalResult.show();
+                    }
                 }
             }
         }
@@ -231,6 +249,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     pullCommand.addEventListener('click', evt => {
         evt.stopPropagation();
+        pullCommand.setAttribute('disabled', true);
+
         method = "POST";
         req.open(method, "/pull");
         req.responseType = "json";
@@ -240,7 +260,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
             if (req.readyState === XMLHttpRequest.DONE) {
                 if (req.status === 200) {
                     let reponse = req.response;
-                    console.log(reponse)
+                    if(reponse.message) {
+                        displayMessage.textContent = reponse.message;
+                        modalResult.show();
+                    }
                 }
             }
         }
@@ -248,5 +271,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     document.getElementById('exampleModal').addEventListener('hidden.bs.modal', function (event) {
         commitMsg.value = "";
+        commitCommand.removeAttribute("disabled")
+    })
+
+    document.getElementById('modalResult').addEventListener('hidden.bs.modal', function (event) {
+        displayMessage.textContent = "";
+        pushCommand.removeAttribute("disabled");
+        pullCommand.removeAttribute("disabled");
     })
 });

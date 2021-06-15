@@ -92,10 +92,13 @@ exports.gitCommit = async (req, res, next) => {
     }
 
     try {
-        const git  = await simpleGit(folder);
-        const test = await git.commit(message);
-        console.log(test)
-        console.log(folder)
+        const git    = await simpleGit(folder);
+        await git.add('./*')
+        await git.commit(message);
+        await res.status(200).json({
+            message: "Vous êtes prêt à push"
+        });
+
     } catch (error) {
         console.log(error)
     }
@@ -122,11 +125,9 @@ exports.gitPush = async (req, res, next) => {
 
     try {
         const git  = await simpleGit(folder);
-        const test = await git.push();
-        console.log(test)
-        console.log(folder)
-        return res.status(200).json({
-            message: "push OK"
+        await git.push();
+        await res.status(200).json({
+            message: "Votre répo git a été mise à jour"
         });
     } catch (error) {
         console.log(error)
@@ -155,8 +156,8 @@ exports.gitPull = async (req, res, next) => {
     try {
         const git  = await simpleGit(folder);
         await git.pull();
-        return res.status(200).json({
-            message: "pull OK"
+        await res.status(200).json({
+            message: "Votre branch local a été mise à jour"
         });
     } catch (error) {
         console.log(error)

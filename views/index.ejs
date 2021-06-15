@@ -28,7 +28,7 @@
     <div class="sidenav bg-secondary">
 
       <div class="d-flex justify-content-center mb-2 d-none" id="gitCommand">
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal"> Commit </button>
+        <button class="btn btn-success" id="commitCommand" data-bs-toggle="modal" data-bs-target="#exampleModal"> Commit </button>
         <button class="btn btn-danger mx-2" id="pushCommand"> Push </button>
         <button class="btn btn-primary" id="pullCommand"> Pull </button>
       </div>
@@ -77,6 +77,20 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
             <button type="button" class="btn btn-primary" id="sendCommitBtn">Valider</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="modalResult" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2500;">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header d-flex justify-content-end">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="text-center" id="displayMessage"> </p>
           </div>
         </div>
       </div>
