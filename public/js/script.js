@@ -19,9 +19,42 @@ window.addEventListener('DOMContentLoaded', (event) => {
         directoryNameDisplay.textContent = directoryName;
     }
 
-    function test() {
-        console.log('tu me fait chier')
+    const openAction = (renderHtml, btnInfoPath, subContent) => {
+        btnInfoPath.forEach(btn => {
+            btn.addEventListener('click', evt => {
+                btn.classList.add('active');
+                let contentTree = dirTree(btn.getAttribute('data-path'));
+                renderHtml = "";
+                if (contentTree.length != 0) {
+                    if(contentTree.children) {
+                        contentTree.children.forEach(element => {
+                            if (element.type == "directory") {
+                                renderHtml += `
+                                        <button class="btn text-white d-flex align-items-center fw-bold btnInfoPath mx-1" data-path="${element.path}">
+                                            <span class="mx-1"> - </span>
+                                            <span class="iconify" data-inline="false" data-icon="ant-design:folder-open-filled" style="color: #fff; font-size: 19px; margin-right: 5px;"></span>
+                                            <span> ${element.name} </span>
+                                        </button>
+                                        <div class="subContent"></div>`;
+                            } else if (element.type == "file") {
+                                renderHtml += `
+                                        <button class="btn text-white d-flex align-items-center btnInfoPath mx-1" data-path="${element.path}">
+                                            <span class="mx-1"> - </span>
+                                            <span class="text-underline"> ${element.name} </span>
+                                        </button>
+                                        <div class="subContent"></div>`;
+                            }
+                        });
+                        btn.nextElementSibling.innerHTML = renderHtml;
+                        let btnInfoPath = document.querySelectorAll('.btnInfoPath');
+                        let subContent = document.querySelectorAll('.subContent');
+                        openAction(renderHtml, btnInfoPath, subContent);
+                    }
+                }
+            })
+        })
     }
+
 
     openFolder.addEventListener("click", async (evt) => {
         try {
@@ -73,46 +106,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                     folderContent.innerHTML = renderHtml;
                                     let btnInfoPath = document.querySelectorAll('.btnInfoPath');
                                     let subContent = document.querySelectorAll('.subContent');
-
-                                    btnInfoPath.forEach(btn => {
-                                        btn.addEventListener('click', evt => {
-                                            subContent.forEach(item => {
-                                                item.innerHTML = "";
-                                            });
-
-                                            if(btn.classList.contains('active')){
-                                                btn.classList.remove('active');
-                                                renderHtml = "";
-                                                btn.nextElementSibling.innerHTML = renderHtml;
-                                            } else {
-                                                btn.classList.add('active');
-                                                let contentTree = dirTree(btn.getAttribute('data-path'));
-                                                renderHtml = "";
-                                                contentTree.children.forEach(element => {
-                                                    if (element.type == "directory") {
-                                                        renderHtml += `
-                                                            <button class="btn text-white d-flex align-items-center fw-bold btnInfoPath" data-path="${element.path}">
-                                                                <span class="mx-2"> - </span>
-                                                                <span class="iconify" data-inline="false" data-icon="ant-design:folder-open-filled" style="color: #fff; font-size: 19px; margin-right: 5px;"></span>
-                                                                <span> ${element.name} </span>
-                                                            </button>
-                                                            <div class="subContent"></div>`;
-                                                    } else if (element.type == "file") {
-                                                        renderHtml += `
-                                                            <button class="btn text-white d-flex align-items-center btnInfoPath" data-path="${element.path}">
-                                                                <span class="mx-2"> - </span>
-                                                                <span> ${element.name} </span>
-                                                            </button>
-                                                            <div class="subContent"></div>`;
-                                                    }
-                                                });
-                                                btn.nextElementSibling.innerHTML = renderHtml;
-                                            }
-                                        })
-                                    })
+                                    openAction(renderHtml, btnInfoPath, subContent);
                                 }
-
-                                console.log(filteredTree)
                             }
                         }
                     })
