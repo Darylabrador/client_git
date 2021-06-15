@@ -8,20 +8,66 @@ window.addEventListener('DOMContentLoaded', (event) => {
     let req = new XMLHttpRequest();
     let method, data;
 
+    let fileName = document.getElementById('fileName');
+    let defaultFileName = "Aucun fichier sélectionner";
+    let editor = document.getElementById('editor');
+
     let loading = document.getElementById('loading');
     let directoryNameDisplay = document.getElementById("directoryNameDisplay");
     let invalideFolder = document.getElementById("invalideFolder");
     let openFolder = document.getElementById("openFolder");
     let folderContent = document.getElementById('folderContent');
-    let fileViewer = document.getElementById('fileViewer');
 
     const setDirectoryName = (directoryName) => {
         directoryNameDisplay.textContent = directoryName;
     }
 
-    const openAction = (renderHtml, btnInfoPath, subContent) => {
+    const openAction = (renderHtml, btnInfoPath, btnShowContent) => {
+        btnShowContent.forEach(btn => {
+            btn.addEventListener('click', evt => {
+                let pathFile = btn.getAttribute('data-path');
+                evt.stopImmediatePropagation();
+                data = { filePath: pathFile }
+                method = "POST";
+                req.open(method, "/show/content");
+                req.responseType = "json";
+                req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
+                req.send(JSON.stringify(data));
+
+                req.onload = () => {
+                    if(req.readyState === XMLHttpRequest.DONE) {
+                        if(req.status === 200) {
+                            let reponse = req.response;
+                            fileName.textContent = btn.getAttribute('data-name');
+                            fileName.classList.remove('d-none');
+                            editor.classList.remove("d-none");
+                            editor.value = reponse.content;
+
+                            editor.addEventListener('change', evt => {
+                                data = { filePath: pathFile, fileContent: evt.currentTarget.value }
+                                method = "POST";
+                                req.open(method, "/save");
+                                req.responseType = "json";
+                                req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
+                                req.send(JSON.stringify(data));
+                                req.onload = () => {
+                                    if(req.readyState === XMLHttpRequest.DONE) {
+                                        if(req.status === 200) {}
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        console.log("une erreur est survenue")
+                    }
+                }
+            })
+        })
+
         btnInfoPath.forEach(btn => {
             btn.addEventListener('click', evt => {
+                evt.stopImmediatePropagation();
+
                 btn.classList.add('active');
                 let contentTree = dirTree(btn.getAttribute('data-path'));
                 renderHtml = "";
@@ -38,17 +84,23 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                         <div class="subContent"></div>`;
                             } else if (element.type == "file") {
                                 renderHtml += `
-                                        <button class="btn text-white d-flex align-items-center btnInfoPath mx-1" data-path="${element.path}">
+                                        <button class="btn text-white d-flex align-items-center btnShowContent mx-1" data-path="${element.path}" data-name="${element.name}">
                                             <span class="mx-1"> - </span>
                                             <span class="text-underline"> ${element.name} </span>
                                         </button>
                                         <div class="subContent"></div>`;
                             }
                         });
-                        btn.nextElementSibling.innerHTML = renderHtml;
+
+                        if(btn.nextElementSibling.hasChildNodes()){
+                            btn.nextElementSibling.innerHTML = "";
+                        } else {
+                            btn.nextElementSibling.innerHTML = renderHtml;
+                        }
+        
                         let btnInfoPath = document.querySelectorAll('.btnInfoPath');
-                        let subContent = document.querySelectorAll('.subContent');
-                        openAction(renderHtml, btnInfoPath, subContent);
+                        let btnShowContent = document.querySelectorAll('.btnShowContent');
+                        openAction(renderHtml, btnInfoPath, btnShowContent);
                     }
                 }
             })
@@ -58,6 +110,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     openFolder.addEventListener("click", async (evt) => {
         try {
+            fileName.textContent = defaultFileName;
+            fileName.classList.add('d-none');
+            editor.classList.add("d-none");
+            editor.value = "";
+
             folderContent.innerHTML = "";
             directoryNameDisplay.textContent = "Choisir le projet git";
             loading.classList.remove('d-none');
@@ -96,7 +153,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                             <div class="subContent"></div>`;
                                         } else if (element.type == "file") {
                                             renderHtml += `
-                                            <button class="btn text-white d-flex align-items-center btnInfoPath" data-path="${element.path}">
+                                            <button class="btn text-white d-flex align-items-center btnShowContent" data-path="${element.path}" data-name="${element.name}">
                                                 <span> ${element.name} </span>
                                             </button>
                                             <div class="subContent"></div>`;
@@ -105,8 +162,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
                                     folderContent.innerHTML = renderHtml;
                                     let btnInfoPath = document.querySelectorAll('.btnInfoPath');
-                                    let subContent = document.querySelectorAll('.subContent');
-                                    openAction(renderHtml, btnInfoPath, subContent);
+                                    let btnShowContent = document.querySelectorAll('.btnShowContent');
+                                    openAction(renderHtml, btnInfoPath, btnShowContent);
                                 }
                             }
                         }

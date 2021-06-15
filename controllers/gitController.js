@@ -7,14 +7,14 @@ const simpleGit = require('simple-git');
 const git = simpleGit();
 
 /**
- * Open existing git project
+ * Show Content File
  * 
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
  */
-exports.openProject = async (req, res, next) => {
-    const { gitUrl } = req.body;
+exports.showFileContent = async (req, res, next) => {
+    const { filePath } = req.body;
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -25,18 +25,47 @@ exports.openProject = async (req, res, next) => {
     }
 
     try {
-        let directoryPath = path.dirname(gitUrl);
-        fs.readdir(directoryPath, (err, dir) => {
+        fs.readFile(filePath, 'utf8', (err, data) => {
             if(err) {
-                return console.log(err)
+                console.log(err)
+                return;
             }
-            res.status(200).json({
-                success: true,
-                content: dir
+            return res.status(200).json({
+                content: data
             })
-        });
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
 
-        console.log(directoryPath);
+
+
+/**
+ * SAve Content File
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+exports.saveContent = async (req, res, next) => {
+    const { filePath, fileContent } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            success: false,
+            message: errors.array()[0].msg
+        })
+    }
+
+    try {
+        fs.writeFile(filePath, fileContent, (err) => {
+            if(err) {
+                console.log(err)
+                return;
+            }
+        })
     } catch (error) {
         console.log(error);
     }

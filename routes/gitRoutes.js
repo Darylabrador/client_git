@@ -11,24 +11,47 @@ const { body } = require('express-validator');
 
 const gitController = require('../controllers/gitController');
 
-
 /**
- * Open git project
+ * Show File Content
  * 
- * @name openProject POST
+ * @name showFileContent POST
  * @function
  * @memberof module:router/git
- * @param {string} '/open/project' - uri
- * @param {function} gitController.openProject
+ * @param {string} '/show/content' - uri
+ * @param {function} gitController.showFileContent
  */
 router.post(
-    "/open/project", 
+    "/show/content", 
     [
-        body('gitUrl', 'URL Obligatoire')
+        body('filePath', 'Chemin du fichier obligatoire')
         .not()
         .isEmpty()
     ],
-    gitController.openProject
+    gitController.showFileContent
 );
+
+
+/**
+ * Show File Content
+ * 
+ * @name saveContent POST
+ * @function
+ * @memberof module:router/git
+ * @param {string} '/save' - uri
+ * @param {function} gitController.saveContent
+ */
+ router.post(
+    "/save", 
+    [
+        body('filePath', 'Chemin du fichier obligatoire')
+        .not()
+        .isEmpty(),
+        body('fileContent', 'Contenue obligatoire')
+        .not()
+        .isEmpty()
+    ],
+    gitController.saveContent
+);
+
 
 module.exports = router;

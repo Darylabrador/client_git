@@ -34,17 +34,20 @@
         </div>
       </div>
 
-      <div id="folderContent" class=" mt-4 text-white d-flex flex-column pl-2"></div>
+      <div id="folderContent" class=" mt-4 text-white d-flex flex-column pl-2 pb-4"></div>
     </div>
 
     <div class="main pt-5 bg-dark">
 
-      <div id="fileViewer"></div>
+
+      <div id="fileViewer" class="w-100 h-100">
+        <h6 id="fileName" class="text-center text-white my-4 d-none"> Aucun fichier sélectionner </h6>
+        <textarea id="editor" class="text-white bg-dark border border-light d-none w-100 h-75 px-2 py-3"></textarea>
+      </div>
 
       <div id="invalideFolder" class="d-flex justify-content-center align-items-center d-none"
         style="height: 100% !important;">
         <p class="text-center text-white"> Dossier invalide </p>
-
       </div>
 
 
