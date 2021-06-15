@@ -7,6 +7,11 @@ const dirTree = require("directory-tree");
 window.addEventListener('DOMContentLoaded', (event) => {
     let req = new XMLHttpRequest();
     let method, data;
+    let originPath = "";
+
+    let gitCommand = document.getElementById('gitCommand');
+    let pushCommand = document.getElementById('pushCommand');
+    let pullCommand = document.getElementById('pullCommand');
 
     let fileName = document.getElementById('fileName');
     let defaultFileName = "Aucun fichier sélectionner";
@@ -35,8 +40,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 req.send(JSON.stringify(data));
 
                 req.onload = () => {
-                    if(req.readyState === XMLHttpRequest.DONE) {
-                        if(req.status === 200) {
+                    if (req.readyState === XMLHttpRequest.DONE) {
+                        if (req.status === 200) {
                             let reponse = req.response;
                             fileName.textContent = btn.getAttribute('data-name');
                             fileName.classList.remove('d-none');
@@ -51,8 +56,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                 req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
                                 req.send(JSON.stringify(data));
                                 req.onload = () => {
-                                    if(req.readyState === XMLHttpRequest.DONE) {
-                                        if(req.status === 200) {}
+                                    if (req.readyState === XMLHttpRequest.DONE) {
+                                        if (req.status === 200) {
+                                            let reponse = req.response;
+                                        }
                                     }
                                 }
                             });
@@ -72,7 +79,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 let contentTree = dirTree(btn.getAttribute('data-path'));
                 renderHtml = "";
                 if (contentTree.length != 0) {
-                    if(contentTree.children) {
+                    if (contentTree.children) {
                         contentTree.children.forEach(element => {
                             if (element.type == "directory") {
                                 renderHtml += `
@@ -92,12 +99,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             }
                         });
 
-                        if(btn.nextElementSibling.hasChildNodes()){
+                        if (btn.nextElementSibling.hasChildNodes()) {
                             btn.nextElementSibling.innerHTML = "";
                         } else {
                             btn.nextElementSibling.innerHTML = renderHtml;
                         }
-        
+
                         let btnInfoPath = document.querySelectorAll('.btnInfoPath');
                         let btnShowContent = document.querySelectorAll('.btnShowContent');
                         openAction(renderHtml, btnInfoPath, btnShowContent);
@@ -107,9 +114,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
         })
     }
 
-
     openFolder.addEventListener("click", async (evt) => {
         try {
+            gitCommand.classList.add('d-none');
             fileName.textContent = defaultFileName;
             fileName.classList.add('d-none');
             editor.classList.add("d-none");
@@ -125,6 +132,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 loading.classList.add('d-none');
                 directoryNameDisplay.textContent = "Choisir le projet git";
                 folderContent.innerHTML = "";
+                gitCommand.classList.add('d-none');
             } else {
                 if (directory.filePaths && directory.filePaths.length != 0) {
 
@@ -132,14 +140,17 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         if (error) {
                             folderContent.innerHTML = "";
                             invalideFolder.classList.remove('d-none');
+                            gitCommand.classList.add('d-none');
                             directoryNameDisplay.textContent = "Choisir le projet git";
                         } else {
                             loading.classList.add('d-none');
                             invalideFolder.classList.add('d-none');
+                            originPath = directory.filePaths[0];
                             const filteredTree = dirTree(directory.filePaths[0]);
 
                             if (filteredTree) {
                                 setDirectoryName(filteredTree.name);
+                                gitCommand.classList.remove('d-none');
                                 if (filteredTree.children) {
                                     let renderHtml = "";
 
@@ -173,5 +184,69 @@ window.addEventListener('DOMContentLoaded', (event) => {
         } catch (error) {
             console.log(error)
         }
+    })
+
+    let sendCommitBtn = document.getElementById('sendCommitBtn');
+    let commitMsg = document.getElementById("commitMsg");
+
+    var modalCommit = new bootstrap.Modal(document.getElementById('exampleModal'))
+
+    sendCommitBtn.addEventListener('click', evt => {
+        evt.stopPropagation();
+        if (commitMsg.value != "") {
+
+            data = { message: commitMsg.value, folder: originPath }
+            method = "POST";
+            req.open(method, "/commit");
+            req.responseType = "json";
+            req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
+            req.send(JSON.stringify(data));
+            req.onload = () => {
+                if (req.readyState === XMLHttpRequest.DONE) {
+                    if (req.status === 200) {
+                        let reponse = req.response;
+                        modalCommit.toggle();
+                    }
+                }
+            }
+        }
+    })
+
+    pushCommand.addEventListener('click', evt => {
+        evt.stopPropagation();
+        method = "POST";
+        req.open(method, "/push");
+        req.responseType = "json";
+        req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
+        req.send(JSON.stringify({folder: originPath}));
+        req.onload = () => {
+            if (req.readyState === XMLHttpRequest.DONE) {
+                if (req.status === 200) {
+                    let reponse = req.response;
+                    console.log(reponse)
+                }
+            }
+        }
+    })
+
+    pullCommand.addEventListener('click', evt => {
+        evt.stopPropagation();
+        method = "POST";
+        req.open(method, "/pull");
+        req.responseType = "json";
+        req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
+        req.send(JSON.stringify({folder: originPath}));
+        req.onload = () => {
+            if (req.readyState === XMLHttpRequest.DONE) {
+                if (req.status === 200) {
+                    let reponse = req.response;
+                    console.log(reponse)
+                }
+            }
+        }
+    })
+
+    document.getElementById('exampleModal').addEventListener('hidden.bs.modal', function (event) {
+        commitMsg.value = "";
     })
 });

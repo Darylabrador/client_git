@@ -26,6 +26,13 @@
     </nav>
 
     <div class="sidenav bg-secondary">
+
+      <div class="d-flex justify-content-center mb-2 d-none" id="gitCommand">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal"> Commit </button>
+        <button class="btn btn-danger mx-2" id="pushCommand"> Push </button>
+        <button class="btn btn-primary" id="pullCommand"> Pull </button>
+      </div>
+
       <h6 id="directoryNameDisplay" class="text-center fw-bold">Choisir le projet git</h6>
 
       <div class="my-2">
@@ -38,8 +45,6 @@
     </div>
 
     <div class="main pt-5 bg-dark">
-
-
       <div id="fileViewer" class="w-100 h-100">
         <h6 id="fileName" class="text-center text-white my-4 d-none"> Aucun fichier sélectionner </h6>
         <textarea id="editor" class="text-white bg-dark border border-light d-none w-100 h-75 px-2 py-3"></textarea>
@@ -58,6 +63,25 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2500;">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Message de commit</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input id="commitMsg" type="text" class="form-control" placeholder="Saisir le message">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button type="button" class="btn btn-primary" id="sendCommitBtn">Valider</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <script type="module" src="/js/script.js"></script>
     <script type="module" src="/js/menuHandlerElectron.js"></script>

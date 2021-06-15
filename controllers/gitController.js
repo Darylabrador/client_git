@@ -1,10 +1,11 @@
-const path   = require('path');
-const fs     = require('fs');
+const path = require('path');
+const fs = require('fs');
+
+const { exec } = require('child_process');
 
 const { validationResult } = require("express-validator");
 
 const simpleGit = require('simple-git');
-const git = simpleGit();
 
 /**
  * Show Content File
@@ -26,7 +27,7 @@ exports.showFileContent = async (req, res, next) => {
 
     try {
         fs.readFile(filePath, 'utf8', (err, data) => {
-            if(err) {
+            if (err) {
                 console.log(err)
                 return;
             }
@@ -42,7 +43,7 @@ exports.showFileContent = async (req, res, next) => {
 
 
 /**
- * SAve Content File
+ * Save Content File
  * 
  * @param {*} req 
  * @param {*} res 
@@ -61,12 +62,103 @@ exports.saveContent = async (req, res, next) => {
 
     try {
         fs.writeFile(filePath, fileContent, (err) => {
-            if(err) {
+            if (err) {
                 console.log(err)
                 return;
             }
         })
     } catch (error) {
         console.log(error);
+    }
+}
+
+
+/**
+ * Git Commit Command
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+exports.gitCommit = async (req, res, next) => {
+    const { message, folder } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            success: false,
+            message: errors.array()[0].msg
+        })
+    }
+
+    try {
+        const git  = await simpleGit(folder);
+        const test = await git.commit(message);
+        console.log(test)
+        console.log(folder)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+/**
+* Git Push Command
+* 
+* @param {*} req 
+* @param {*} res 
+* @param {*} next 
+*/
+exports.gitPush = async (req, res, next) => {
+    const { folder } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            success: false,
+            message: errors.array()[0].msg
+        })
+    }
+
+    try {
+        const git  = await simpleGit(folder);
+        const test = await git.push();
+        console.log(test)
+        console.log(folder)
+        return res.status(200).json({
+            message: "push OK"
+        });
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+/**
+ * Git Pull Command
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+exports.gitPull = async (req, res, next) => {
+    const { folder } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            success: false,
+            message: errors.array()[0].msg
+        })
+    }
+
+    try {
+        const git  = await simpleGit(folder);
+        await git.pull();
+        return res.status(200).json({
+            message: "pull OK"
+        });
+    } catch (error) {
+        console.log(error)
     }
 }
