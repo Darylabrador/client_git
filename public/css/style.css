@@ -10,6 +10,7 @@ body,
 html {
   height: 100%;
   -webkit-user-select: none;
+  background-color: #212529 !important;
 }
 
 html {
@@ -73,7 +74,7 @@ nav {
 /* --------- CUSTOM SIDENAV --------- */
 .sidenav {
   height: 100%;
-  width: 200px;
+  width: 220px;
   position: fixed;
   z-index: 50 !important;
   top: 0;
@@ -81,42 +82,9 @@ nav {
   overflow-x: hidden;
   padding-top: 100px;
 }
-.sidenav #logoutContainer {
-  position: absolute !important;
-  bottom: 0 !important;
-  margin-bottom: 20px !important;
-}
-.sidenav a, .sidenav .dropdown-btn {
-  padding: 6px 8px 6px 16px;
-  text-decoration: none;
-  font-size: 16px;
-  color: #ffffff;
-  display: block;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  outline: none;
-}
-.sidenav a:hover, .sidenav .dropdown-btn:hover {
-  color: #afd8ff;
-}
-
-.dropdown-container {
-  display: none;
-  background-color: #283E59;
-  padding-left: 8px;
-  color: #fff !important;
-  border-left: 3px solid #3B5374 !important;
-  border-right: 5px solid #3B5374 !important;
-}
-.dropdown-container a {
-  font-size: 14px !important;
-}
 
 .main {
-  margin-left: 200px;
+  margin-left: 220px;
   padding: 10px 10px;
   height: 100% !important;
 }

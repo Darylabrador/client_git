@@ -14,6 +14,7 @@ body,
 html {
     height: 100%;
     -webkit-user-select: none;
+    background-color: #212529 !important;
 }
 
 html {
@@ -84,55 +85,17 @@ nav {
 
 .sidenav {
     height: 100%;
-    width: 200px;
+    width: 220px;
     position: fixed;
     z-index: 50 !important;
     top: 0;
     left: 0;
     overflow-x: hidden;
     padding-top: 100px;
-
-    & #logoutContainer {
-        position: absolute !important;
-        bottom: 0 !important;
-        margin-bottom: 20px !important;
-    }
-
-    & a,
-    & .dropdown-btn {
-        padding: 6px 8px 6px 16px;
-        text-decoration: none;
-        font-size: 16px;
-        color: #ffffff;
-        display: block;
-        border: none;
-        background: none;
-        width: 100%;
-        text-align: left;
-        cursor: pointer;
-        outline: none;
-
-        &:hover {
-            color: #afd8ff;
-        }
-    }
-}
-
-.dropdown-container {
-    display: none;
-    background-color: colors.$backgroundDarkBlue;
-    padding-left: 8px;
-    color: #fff !important;
-    border-left: 3px solid colors.$backgroundLightBlue !important;
-    border-right: 5px solid colors.$backgroundLightBlue !important;
-
-    & a {
-        font-size: 14px !important;
-    }
 }
 
 .main {
-    margin-left: 200px;
+    margin-left: 220px;
     padding: 10px 10px;
     height: 100% !important;
 }
