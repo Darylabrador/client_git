@@ -113,6 +113,13 @@ function loadRoutes(callback) {
     expressApp.use('/', GeneralRoutes);
     expressApp.use(GitRoutes);
     expressApp.use(HistoryRoutes);
+
+    expressApp.use((error, req, res, next) => {
+        res.status(error.httpStatusCode).json({
+            statusCode: error.httpStatusCode,
+            message: error.msg
+        })
+    })
     
     if (typeof callback != 'undefined') {
         callback();

@@ -28,15 +28,19 @@ exports.showFileContent = async (req, res, next) => {
     try {
         fs.readFile(filePath, 'utf8', async (err, data) => {
             if (err) {
-                console.log(err)
-                return;
+                const error = new Error('Impossible de lire le fichier');
+                error.httpStatusCode = 500;
+                throw error;
             }
             return res.status(200).json({
                 content: data
             })
         })
     } catch (error) {
-        console.log(error);
+        const err = new Error(error);
+        err.httpStatusCode = 500;
+        err.msg = "Une erreur est survenue";
+        next(err);
     }
 }
 
@@ -63,12 +67,16 @@ exports.saveContent = async (req, res, next) => {
     try {
         fs.writeFile(filePath, fileContent, (err) => {
             if (err) {
-                console.log(err)
-                return;
+                const error = new Error("Impossible d'écrire dans le fichier");
+                error.httpStatusCode = 500;
+                throw error;
             }
         })
     } catch (error) {
-        console.log(error);
+        const err = new Error(error);
+        err.httpStatusCode = 500;
+        err.msg = "Une erreur est survenue";
+        next(err);
     }
 }
 
@@ -100,7 +108,10 @@ exports.gitCommit = async (req, res, next) => {
         });
 
     } catch (error) {
-        console.log(error)
+        const err = new Error(error);
+        err.httpStatusCode = 500;
+        err.msg = "Une erreur est survenue";
+        next(err);
     }
 }
 
@@ -130,7 +141,10 @@ exports.gitPush = async (req, res, next) => {
             message: "Votre répo git a été mise à jour"
         });
     } catch (error) {
-        console.log(error)
+        const err = new Error(error);
+        err.httpStatusCode = 500;
+        err.msg = "Une erreur est survenue";
+        next(err);
     }
 }
 
@@ -160,6 +174,9 @@ exports.gitPull = async (req, res, next) => {
             message: "Votre branch local a été mise à jour"
         });
     } catch (error) {
-        console.log(error)
+        const err = new Error(error);
+        err.httpStatusCode = 500;
+        err.msg = "Une erreur est survenue";
+        next(err);
     }
 }

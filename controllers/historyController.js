@@ -27,7 +27,10 @@ exports.getHistory = async (req, res, next) => {
         })
         return res.status(200).json({ history })
     } catch (error) {
-        console.log(error);
+        const err = new Error(error);
+        err.httpStatusCode = 500;
+        err.msg = "Une erreur est survenue";
+        next(err);
     }
 }
 
@@ -69,6 +72,9 @@ exports.postHistory = async (req, res, next) => {
             message: "Saved folder path"
         })
     } catch (error) {
-        console.log(error);
+        const err = new Error(error);
+        err.httpStatusCode = 500;
+        err.msg = "Une erreur est survenue";
+        next(err);
     }
 }
