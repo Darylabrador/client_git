@@ -5,9 +5,8 @@ const fs            = require('fs');
 const dirTree       = require("directory-tree");
 
 window.addEventListener('DOMContentLoaded', (event) => {
-    let req         = new XMLHttpRequest();
     let originPath  = "";
-    let method, data;
+    let data;
 
     let defaultFileName      = "Aucun fichier sélectionner";
     let displayMessage       = document.getElementById('displayMessage');
@@ -40,27 +39,23 @@ window.addEventListener('DOMContentLoaded', (event) => {
      * Get path history
      */
     const getHistory = () => {
-        method = "GET";
-        req.open(method, "/history");
-        req.responseType = "json";
-        req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
-        req.send(null);
-        req.onload = () => {
-            if (req.readyState === XMLHttpRequest.DONE) {
-                if (req.status === 200) {
-                    let reponse = req.response;
-                    let renderOption  = "";
-                    if(reponse.history && reponse.history.length != 0) {
-                        reponse.history.forEach(element => {
-                            let folderpathArray = element.path.split('\\');
-                            let folderName = folderpathArray[folderpathArray.length - 1]
-                            renderOption += `<option value=${element.path}> ${folderName}</option>`;
-                        })
-                        historyOption.innerHTML = renderOption;
-                    }
-                }
+        fetch("/history", {
+            method: "GET",
+            headers: {"Content-type": "application/json;charset=UTF-8"}
+        })
+        .then(response => response.json()) 
+        .then(({history}) => {
+            let renderOption  = "";
+            if(history && history.length != 0) {
+                history.forEach(element => {
+                    let folderpathArray = element.path.split('\\');
+                    let folderName = folderpathArray[folderpathArray.length - 1]
+                    renderOption += `<option value=${element.path}> ${folderName}</option>`;
+                })
+                historyOption.innerHTML = renderOption;
             }
-        }
+        })
+        .catch(err => console.log(err));
     }
 
     
@@ -87,34 +82,37 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 let pathFile = btn.getAttribute('data-path');
                 evt.stopImmediatePropagation();
                 data = { filePath: pathFile }
-                method = "POST";
-                req.open(method, "/show/content");
-                req.responseType = "json";
-                req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
-                req.send(JSON.stringify(data));
 
-                req.onload = () => {
-                    if (req.readyState === XMLHttpRequest.DONE) {
-                        if (req.status === 200) {
-                            let reponse = req.response;
+                fetch("/show/content", {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                    headers: {"Content-type": "application/json; charset=UTF-8"}
+                })
+                .then(response => response.json()) 
+                .then(({ content }) => {
+                    editor.value = content;
+                    fileName.textContent = btn.getAttribute('data-name');
+                    fileName.classList.remove('d-none');
+                    editor.classList.remove("d-none");
+
+                    editor.addEventListener('change', evt => {
+                        data = { filePath: pathFile, fileContent: evt.currentTarget.value }
+                        fetch("/save", {
+                            method: "POST",
+                            body: JSON.stringify(data),
+                            headers: {"Content-type": "application/json; charset=UTF-8"}
+                        })
+                        .then(response => response.json()) 
+                        .then(({ content }) => {
+                            editor.value = content;
                             fileName.textContent = btn.getAttribute('data-name');
                             fileName.classList.remove('d-none');
                             editor.classList.remove("d-none");
-                            editor.value = reponse.content;
-
-                            editor.addEventListener('change', evt => {
-                                data = { filePath: pathFile, fileContent: evt.currentTarget.value }
-                                method = "POST";
-                                req.open(method, "/save");
-                                req.responseType = "json";
-                                req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
-                                req.send(JSON.stringify(data));
-                            });
-                        }
-                    } else {
-                        console.error("une erreur est survenue")
-                    }
-                }
+                        })
+                        .catch(err => console.log(err));
+                    })
+                })
+                .catch(err => console.log(err));
             })
         })
 
@@ -171,13 +169,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
             let directory = await dialog.showOpenDialog({ properties: ['openDirectory'] });
 
             if (directory.canceled) {
-       
                 directoryNameDisplay.textContent = "Choisir le projet git";
                 folderContent.innerHTML = "";
                 gitCommand.classList.add('d-none');
             } else {
                 if (directory.filePaths && directory.filePaths.length != 0) {
-
                     fs.access(path.join(directory.filePaths[0], ".git"), async function (error) {
                         if (error) {
                             folderContent.innerHTML = "";
@@ -186,20 +182,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             directoryNameDisplay.textContent = "Choisir le projet git";
                         } else {
                             originPath = directory.filePaths[0];
-
                             data = { folderPath: originPath }
-                            method = "POST";
-                            req.open(method, "/history/save");
-                            req.responseType = "json";
-                            req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
-                            req.send(JSON.stringify(data));
-                            req.onload = () => {
-                                if (req.readyState === XMLHttpRequest.DONE) {
-                                    if (req.status === 200) {
-                                        getHistory();
-                                    }
-                                }
-                            }
+
+                            fetch('/history/save', {
+                                method: "POST",
+                                body: JSON.stringify(data),
+                                headers: {"Content-type": "application/json; charset=UTF-8"}
+                            })
+                            .then(response => response.json()) 
+                            .then(json => getHistory())
+                            .catch(err => console.log(err));
 
                             const filteredTree = dirTree(directory.filePaths[0]);
 
@@ -239,18 +231,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
         } else {
             originPath = directoryPath;
             data = { folderPath: originPath }
-            method = "POST";
-            req.open(method, "/history/save");
-            req.responseType = "json";
-            req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
-            req.send(JSON.stringify(data));
-            req.onload = () => {
-                if (req.readyState === XMLHttpRequest.DONE) {
-                    if (req.status === 200) {
-                        getHistory();
-                    }
-                }
-            }
+            fetch('/history/save', {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {"Content-type": "application/json; charset=UTF-8"}
+            })
+            .then(response => response.json()) 
+            .then(json => getHistory())
+            .catch(err => console.log(err));
 
             const filteredTree = dirTree(directoryPath);
 
@@ -330,25 +318,19 @@ window.addEventListener('DOMContentLoaded', (event) => {
     sendCommitBtn.addEventListener('click', evt => {
         evt.stopPropagation();
         if (commitMsg.value != "") {
-
             data = { message: commitMsg.value, folder: originPath }
-            method = "POST";
-            req.open(method, "/commit");
-            req.responseType = "json";
-            req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
-            req.send(JSON.stringify(data));
-            req.onload = () => {
-                if (req.readyState === XMLHttpRequest.DONE) {
-                    if (req.status === 200) {
-                        let reponse = req.response;
-                        if(reponse.message) {
-                            displayMessage.textContent = reponse.message;
-                            modalResult.show();
-                            modalCommit.hide();
-                        }
-                    }
-                }
-            }
+            fetch('/commit', {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {"Content-type": "application/json; charset=UTF-8"}
+            })
+            .then(response => response.json()) 
+            .then(({ message }) => {
+                displayMessage.textContent = message;
+                modalResult.show();
+                modalCommit.hide();
+            })
+            .catch(err => console.log(err));
         }
     })
 
@@ -359,23 +341,17 @@ window.addEventListener('DOMContentLoaded', (event) => {
     pushCommand.addEventListener('click', evt => {
         evt.stopPropagation();
         pushCommand.setAttribute('disabled', true);
-
-        method = "POST";
-        req.open(method, "/push");
-        req.responseType = "json";
-        req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
-        req.send(JSON.stringify({folder: originPath}));
-        req.onload = () => {
-            if (req.readyState === XMLHttpRequest.DONE) {
-                if (req.status === 200) {
-                    let reponse = req.response;
-                    if(reponse.message) {
-                        displayMessage.textContent = reponse.message;
-                        modalResult.show();
-                    }
-                }
-            }
-        }
+        fetch('/push', {
+            method: "POST",
+            body: JSON.stringify({folder: originPath}),
+            headers: {"Content-type": "application/json; charset=UTF-8"}
+        })
+        .then(response => response.json()) 
+        .then(({ message }) => {
+            displayMessage.textContent = message;
+            modalResult.show();
+        })
+        .catch(err => console.log(err));
     })
 
 
@@ -385,23 +361,17 @@ window.addEventListener('DOMContentLoaded', (event) => {
     pullCommand.addEventListener('click', evt => {
         evt.stopPropagation();
         pullCommand.setAttribute('disabled', true);
-
-        method = "POST";
-        req.open(method, "/pull");
-        req.responseType = "json";
-        req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
-        req.send(JSON.stringify({folder: originPath}));
-        req.onload = () => {
-            if (req.readyState === XMLHttpRequest.DONE) {
-                if (req.status === 200) {
-                    let reponse = req.response;
-                    if(reponse.message) {
-                        displayMessage.textContent = reponse.message;
-                        modalResult.show();
-                    }
-                }
-            }
-        }
+        fetch('/pull', {
+            method: "POST",
+            body: JSON.stringify({folder: originPath}),
+            headers: {"Content-type": "application/json; charset=UTF-8"}
+        })
+        .then(response => response.json()) 
+        .then(({ message }) => {
+            displayMessage.textContent = message;
+            modalResult.show();
+        })
+        .catch(err => console.log(err));
     })
 
     document.getElementById('exampleModal').addEventListener('hidden.bs.modal', function (event) {
