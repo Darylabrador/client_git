@@ -25,10 +25,12 @@ const path                 = require('path');
         var filepath    = "README.md";
         var fileContent = "project initialisation";
         
+        if(!fs.existsSync(path.join(folder, filepath))) {
+            await fs.appendFileSync(path.join(folder, filepath), fileContent);
+        }
         
         const git    = await simpleGit(folder);
         await git.init();
-        await fs.appendFileSync(path.join(folder, filepath), fileContent);
         await git.add('./*');
         await git.commit("first commit!");
         await git.branch(['-M', 'main']);
