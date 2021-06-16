@@ -162,6 +162,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
             } else {
                 fs.access(path.join(directory.filePaths[0], ".git"), async function (error) {
                     const filteredTree = dirTree(directory.filePaths[0]);
+                    document.getElementById('defaultFolder').value = directory.filePaths[0];
 
                     if(error) {
                         folderContent.innerHTML = "";
@@ -171,8 +172,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         setDirectoryName(filteredTree.name);
                     } else {
                         if (directory.filePaths && directory.filePaths.length != 0) {
-                            document.getElementById('defaultFolder').value = directory.filePaths[0];
-
                             originPath = directory.filePaths[0];
                             data = { folderPath: originPath }
         
@@ -309,6 +308,49 @@ window.addEventListener('DOMContentLoaded', (event) => {
         directoryNameDisplay.textContent = "Choisir le projet git";
     })
 
-    
+    var modalResult = new bootstrap.Modal(document.getElementById('modalResult'))
+    var initModal = new bootstrap.Modal(document.getElementById('initModal'))
+
+    /**
+     * Disable commit button
+     */
+    commitCommand.addEventListener('click', evt => {
+        evt.stopPropagation();
+        commitCommand.setAttribute('disabled', true);
+    });
+
+
     getHistory();
+
+    /**
+     * Init a repos with .git
+     */
+    let initRepoBtn   = document.getElementById('initRepoBtn');
+
+    initRepoBtn.addEventListener('click', evt => {
+        evt.stopImmediatePropagation();
+        let defineFolder = document.getElementById('defaultFolder').value;
+
+        data = { folder: defineFolder, repoUrl: document.getElementById('initRepoUrl').value }
+
+        fetch('/init', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {"Content-type": "application/json; charset=UTF-8"}
+        })
+        .then(response => response.json()) 
+        .then(({ message }) => {
+            displayMessage.textContent = message;
+            modalResult.show();
+            initModal.hide();
+            initContainer.classList.add('d-none');
+            fileViewer.classList.remove('d-none');
+            openFolderContent(defineFolder)
+        })
+        .catch(err => console.log(err));
+    })
+
+    document.getElementById('initModal').addEventListener('hidden.bs.modal', function (event) {
+        document.getElementById('initRepoUrl').value = "";
+    })
 })

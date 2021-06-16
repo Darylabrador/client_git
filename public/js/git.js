@@ -8,15 +8,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     let sendCommitBtn = document.getElementById('sendCommitBtn');
     let commitMsg     = document.getElementById("commitMsg");
-
-    let initRepoUrl   = document.getElementById('initRepoUrl');
-    let initRepoBtn   = document.getElementById('initRepoBtn');
     
     var modalCommit = new bootstrap.Modal(document.getElementById('exampleModal'))
     var modalResult = new bootstrap.Modal(document.getElementById('modalResult'))
-    var modalInit   = new bootstrap.Modal(document.getElementById('initModal'))
-
-    let defineFolder = document.getElementById('defaultFolder').value;
 
     /**
      * Disable commit button
@@ -25,29 +19,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
         evt.stopPropagation();
         commitCommand.setAttribute('disabled', true);
     });
-
-
-    /**
-     * Init a repos with .git
-     */
-    initRepoBtn.addEventListener('click', evt => {
-        evt.stopImmediatePropagation();
-        data = { folder: defineFolder, repoUrl: initRepoUrl.value }
-        fetch('/init', {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: {"Content-type": "application/json; charset=UTF-8"}
-        })
-        .then(response => response.json()) 
-        .then(({ message }) => {
-            displayMessage.textContent = message;
-            modalResult.show();
-            modalInit.hide();
-            openFolderContent(localStorage.folderPath);
-        })
-        .catch(err => console.log(err));
-    })
-
     
     /**
      * Action to send the commit with it's message
@@ -55,6 +26,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     sendCommitBtn.addEventListener('click', evt => {
         evt.stopPropagation();
         if (commitMsg.value != "") {
+            let defineFolder = document.getElementById('defaultFolder').value;
             data = { message: commitMsg.value, folder: defineFolder }
             fetch('/commit', {
                 method: "POST",
@@ -78,6 +50,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     pushCommand.addEventListener('click', evt => {
         evt.stopPropagation();
         pushCommand.setAttribute('disabled', true);
+        let defineFolder = document.getElementById('defaultFolder').value;
         fetch('/push', {
             method: "POST",
             body: JSON.stringify({folder: defineFolder}),
@@ -98,6 +71,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     pullCommand.addEventListener('click', evt => {
         evt.stopPropagation();
         pullCommand.setAttribute('disabled', true);
+        let defineFolder = document.getElementById('defaultFolder').value;
         fetch('/pull', {
             method: "POST",
             body: JSON.stringify({folder: defineFolder}),
@@ -111,10 +85,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
         .catch(err => console.log(err));
     })
 
-
-    document.getElementById('initModal').addEventListener('hidden.bs.modal', function (event) {
-        initRepoUrl.value = "";
-    })
 
     document.getElementById('exampleModal').addEventListener('hidden.bs.modal', function (event) {
         commitMsg.value = "";

@@ -22,16 +22,15 @@ const gitController = require('../controllers/gitController');
  * @param {string} '/init' - uri
  * @param {function} gitController.gitInit
  */
- router.post(
+router.post(
     "/init",
     [
         body('folder', 'Chemin du fichier obligatoire')
             .not()
             .isEmpty(),
         body('repoUrl', 'URL du repo obligatoire')
-        .not()
-        .isEmpty()
-        .isURL(),
+            .not()
+            .isEmpty()
     ],
     gitController.gitInit
 );

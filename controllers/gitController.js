@@ -11,7 +11,7 @@ const simpleGit            = require('simple-git');
  * @param {*} next 
  */
  exports.gitInit = async (req, res, next) => {
-    const { folder, repoUrl } = req.body;
+    const { folder } = req.body;
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -22,12 +22,8 @@ const simpleGit            = require('simple-git');
     }
 
     try {
-        const git    = await simpleGit(folder);
+        const git = await simpleGit(folder);
         await git.init();
-        await git.add('./*');
-        await git.commit("first commit!");
-        await git.addRemote('origin', repoUrl);
-        await git.push('origin', 'main');
         await res.status(200).json({
             message: "Votre repo est initialisé"
         });
