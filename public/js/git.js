@@ -10,8 +10,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
     let sendCommitBtn = document.getElementById('sendCommitBtn');
     let commitMsg     = document.getElementById("commitMsg");
 
+    let initRepoUrl   = document.getElementById('initRepoUrl');
+    let initRepoBtn   = document.getElementById('initRepoBtn');
+    
     var modalCommit = new bootstrap.Modal(document.getElementById('exampleModal'))
     var modalResult = new bootstrap.Modal(document.getElementById('modalResult'))
+    var modalInit   = new bootstrap.Modal(document.getElementById('initModal'))
 
     
     /**
@@ -23,6 +27,28 @@ window.addEventListener('DOMContentLoaded', (event) => {
     });
 
 
+    /**
+     * Init a repos with .git
+     */
+    initRepoBtn.addEventListener('click', evt => {
+        evt.stopImmediatePropagation();
+        data = { folder: originPath, repoUrl: initRepoUrl.value }
+        fetch('/init', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {"Content-type": "application/json; charset=UTF-8"}
+        })
+        .then(response => response.json()) 
+        .then(({ message }) => {
+            displayMessage.textContent = message;
+            modalResult.show();
+            modalInit.hide();
+            openFolderContent(localStorage.folderPath);
+        })
+        .catch(err => console.log(err));
+    })
+
+    
     /**
      * Action to send the commit with it's message
      */
@@ -85,6 +111,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
         .catch(err => console.log(err));
     })
 
+
+    document.getElementById('initModal').addEventListener('hidden.bs.modal', function (event) {
+        initRepoUrl.value = "";
+    })
 
     document.getElementById('exampleModal').addEventListener('hidden.bs.modal', function (event) {
         commitMsg.value = "";

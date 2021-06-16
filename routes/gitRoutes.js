@@ -12,6 +12,32 @@ const { body } = require('express-validator');
 const gitController = require('../controllers/gitController');
 
 
+
+/**
+ * Git init command
+ * 
+ * @name gitInit POST
+ * @function
+ * @memberof module:router/git
+ * @param {string} '/init' - uri
+ * @param {function} gitController.gitInit
+ */
+ router.post(
+    "/init",
+    [
+        body('folder', 'Chemin du fichier obligatoire')
+            .not()
+            .isEmpty(),
+        body('repoUrl', 'URL du repo obligatoire')
+        .not()
+        .isEmpty()
+        .isURL(),
+    ],
+    gitController.gitInit
+);
+
+
+
 /**
  * Git commit command
  * 

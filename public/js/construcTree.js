@@ -1,5 +1,7 @@
 const remote        = require('electron').remote;
 const { dialog }    = remote;
+const fs            = require("fs");
+const path          = require('path');
 const dirTree       = require("directory-tree");
 
 window.addEventListener('DOMContentLoaded', (event) => {
@@ -16,7 +18,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
     let editor               = document.getElementById('editor');
     let fileName             = document.getElementById('fileName');
     let gitCommand           = document.getElementById('gitCommand');
-    
+    let fileViewer           = document.getElementById('fileViewer');
+    let initContainer        = document.getElementById('initContainer');
+
     var modalRecent          = new bootstrap.Modal(document.getElementById('openRecentModal'))
 
     /**
@@ -149,58 +153,71 @@ window.addEventListener('DOMContentLoaded', (event) => {
     const openFolderContent = async (directoryPath = null) => {
         if(!directoryPath) {
             let directory = await dialog.showOpenDialog({ properties: ['openDirectory'] });
-
             if (directory.canceled) {
                 directoryNameDisplay.textContent = "Choisir le projet git";
                 folderContent.innerHTML = "";
                 gitCommand.classList.add('d-none');
+                fileViewer.classList.add('d-none');
+                initContainer.classList.add('d-none');
             } else {
-                if (directory.filePaths && directory.filePaths.length != 0) {
-                    localStorage.setItem("folderPath", directory.filePaths[0]);
-                    originPath = directory.filePaths[0];
-                    data = { folderPath: originPath }
-
-                    fetch('/history/save', {
-                        method: "POST",
-                        body: JSON.stringify(data),
-                        headers: {"Content-type": "application/json; charset=UTF-8"}
-                    })
-                    .then(response => response.json()) 
-                    .then(json => getHistory())
-                    .catch(err => console.log(err));
-
+                fs.access(path.join(directory.filePaths[0], ".git"), async function (error) {
                     const filteredTree = dirTree(directory.filePaths[0]);
 
-                    if (filteredTree) {
+                    if(error) {
+                        folderContent.innerHTML = "";
+                        fileViewer.classList.add('d-none');
+                        gitCommand.classList.add('d-none');
+                        initContainer.classList.remove('d-none');
                         setDirectoryName(filteredTree.name);
-                        gitCommand.classList.remove('d-none');
-                        if (filteredTree.children) {
-                            let renderHtml = "";
-
-                            filteredTree.children.forEach(element => {
-                                if (element.type == "directory") {
-                                    renderHtml += `
-                                    <button class="btn text-white d-flex align-items-center fw-bold btnInfoPath" data-path="${element.path}">
-                                        <span class="iconify" data-inline="false" data-icon="ant-design:folder-open-filled" style="color: #fff; font-size: 19px; margin-right: 5px;"></span>
-                                        <span> ${element.name} </span>
-                                    </button>
-                                    <div class="subContent"></div>`;
-                                } else if (element.type == "file") {
-                                    renderHtml += `
-                                    <button class="btn text-white d-flex align-items-center btnShowContent" data-path="${element.path}" data-name="${element.name}">
-                                        <span> ${element.name} </span>
-                                    </button>
-                                    <div class="subContent"></div>`;
+                    } else {
+                        if (directory.filePaths && directory.filePaths.length != 0) {
+                            localStorage.setItem("folderPath", directory.filePaths[0]);
+                            originPath = directory.filePaths[0];
+                            data = { folderPath: originPath }
+        
+                            fetch('/history/save', {
+                                method: "POST",
+                                body: JSON.stringify(data),
+                                headers: {"Content-type": "application/json; charset=UTF-8"}
+                            })
+                            .then(response => response.json()) 
+                            .then(json => getHistory())
+                            .catch(err => console.log(err));
+        
+                            if (filteredTree) {
+                                fileViewer.classList.remove('d-none');
+                                initContainer.classList.add('d-none');
+                                setDirectoryName(filteredTree.name);
+                                gitCommand.classList.remove('d-none');
+                                if (filteredTree.children) {
+                                    let renderHtml = "";
+        
+                                    filteredTree.children.forEach(element => {
+                                        if (element.type == "directory") {
+                                            renderHtml += `
+                                            <button class="btn text-white d-flex align-items-center fw-bold btnInfoPath" data-path="${element.path}">
+                                                <span class="iconify" data-inline="false" data-icon="ant-design:folder-open-filled" style="color: #fff; font-size: 19px; margin-right: 5px;"></span>
+                                                <span> ${element.name} </span>
+                                            </button>
+                                            <div class="subContent"></div>`;
+                                        } else if (element.type == "file") {
+                                            renderHtml += `
+                                            <button class="btn text-white d-flex align-items-center btnShowContent" data-path="${element.path}" data-name="${element.name}">
+                                                <span> ${element.name} </span>
+                                            </button>
+                                            <div class="subContent"></div>`;
+                                        }
+                                    });
+        
+                                    folderContent.innerHTML = renderHtml;
+                                    let btnInfoPath = document.querySelectorAll('.btnInfoPath');
+                                    let btnShowContent = document.querySelectorAll('.btnShowContent');
+                                    openAction(renderHtml, btnInfoPath, btnShowContent);
                                 }
-                            });
-
-                            folderContent.innerHTML = renderHtml;
-                            let btnInfoPath = document.querySelectorAll('.btnInfoPath');
-                            let btnShowContent = document.querySelectorAll('.btnShowContent');
-                            openAction(renderHtml, btnInfoPath, btnShowContent);
+                            }
                         }
                     }
-                }
+                }) 
             }
         } else {
             localStorage.setItem("folderPath", directoryPath);

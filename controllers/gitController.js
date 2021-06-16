@@ -2,6 +2,46 @@ const { validationResult } = require("express-validator");
 const simpleGit            = require('simple-git');
 
 
+
+/**
+ * Git init Command
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+ exports.gitInit = async (req, res, next) => {
+    const { folder, repoUrl } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            success: false,
+            message: errors.array()[0].msg
+        })
+    }
+
+    try {
+        const git    = await simpleGit(folder);
+        await git.init()
+                .add('./*')
+                .commit("first commit!")
+                .addRemote('origin', repoUrl)
+                .push('origin', 'main');
+        await res.status(200).json({
+            message: "Votre repo est initialisé"
+        });
+
+    } catch (error) {
+        const err = new Error(error);
+        err.httpStatusCode = 500;
+        err.msg = "Une erreur est survenue";
+        next(err);
+    }
+}
+
+
+
 /**
  * Git Commit Command
  * 

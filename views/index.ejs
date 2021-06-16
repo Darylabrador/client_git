@@ -46,11 +46,35 @@
     </div>
 
     <div class="main pt-5 bg-dark">
-      <div id="fileViewer" class="w-100 h-100">
+      <div id="initContainer" class="d-flex justify-content-center align-items-center h-100 d-none">
+        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#initModal"> Initialiser </button>
+      </div>
+
+      <div id="fileViewer" class="w-100 h-100 d-none">
         <h6 id="fileName" class="text-center text-white my-4 d-none"> Aucun fichier sélectionner </h6>
         <textarea id="editor" class="text-white bg-dark border border-light d-none w-100 h-75 px-2 py-3"></textarea>
       </div>
     </div>
+
+
+    <div class="modal fade" id="initModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2500;">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Initialiser un projet</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input id="initRepoUrl" type="url" class="form-control" placeholder="URL du repo">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button type="button" class="btn btn-primary" id="initRepoBtn">Valider</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2500;">
       <div class="modal-dialog modal-dialog-centered">
@@ -103,8 +127,8 @@
       </div>
     </div>
 
-    <script type="module" src="/js/git.js"></script>
     <script type="module" src="/js/construcTree.js"></script>
+    <script type="module" src="/js/git.js"></script>
     <script type="module" src="/js/menuHandlerElectron.js"></script>
   </body>
 
