@@ -13,7 +13,8 @@ const Repository = require('./models/Repository');
 
 // Routes handler
 const GeneralRoutes = require('./routes/index');
-const GitRoutes = require("./routes/gitRoutes");
+const GitRoutes     = require("./routes/gitRoutes");
+const FileRoutes    = require("./routes/fileRoutes");
 const HistoryRoutes = require("./routes/historyRoutes");
 
 
@@ -111,6 +112,7 @@ function init(callback) {
 function loadRoutes(callback) {
     // Defines routes
     expressApp.use('/', GeneralRoutes);
+    expressApp.use(FileRoutes);
     expressApp.use(GitRoutes);
     expressApp.use(HistoryRoutes);
 
