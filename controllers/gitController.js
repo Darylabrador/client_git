@@ -145,7 +145,7 @@ exports.gitPush = async (req, res, next) => {
     } catch (error) {
         const err = new Error(error);
         err.httpStatusCode = 500;
-        err.msg = "Une erreur est survenue";
+        err.msg = "Vous devez commit et pull d'abord";
         next(err);
     }
 }
@@ -178,7 +178,7 @@ exports.gitPull = async (req, res, next) => {
     } catch (error) {
         const err = new Error(error);
         err.httpStatusCode = 500;
-        err.msg = "Une erreur est survenue";
+        err.msg = "Il y a un problème de merge à résoudre";
         next(err);
     }
 }
