@@ -1,7 +1,7 @@
 const { validationResult } = require("express-validator");
 const simpleGit            = require('simple-git');
-
-
+const fs                   = require('fs');
+const path                 = require('path');
 
 /**
  * Git init Command
@@ -11,7 +11,7 @@ const simpleGit            = require('simple-git');
  * @param {*} next 
  */
  exports.gitInit = async (req, res, next) => {
-    const { folder } = req.body;
+    const { folder, repoUrl } = req.body;
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -22,13 +22,24 @@ const simpleGit            = require('simple-git');
     }
 
     try {
-        const git = await simpleGit(folder);
+        var filepath    = "README.md";
+        var fileContent = "project initialisation";
+        
+        
+        const git    = await simpleGit(folder);
         await git.init();
+        await fs.appendFileSync(path.join(folder, filepath), fileContent);
+        await git.add('./*');
+        await git.commit("first commit!");
+        await git.branch(['-M', 'main']);
+        await git.addRemote('origin', repoUrl);
+        await git.push(['-u', 'origin', 'main']);
         await res.status(200).json({
             message: "Votre repo est initialisé"
         });
 
     } catch (error) {
+        console.log(error)
         const err = new Error(error);
         err.httpStatusCode = 500;
         err.msg = "Une erreur est survenue";
