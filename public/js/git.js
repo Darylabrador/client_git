@@ -5,6 +5,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     let pushCommand    = document.getElementById('pushCommand');
     let pullCommand    = document.getElementById('pullCommand');
     let commitCommand  = document.getElementById('commitCommand');
+    let diffCommand    = document.getElementById('diffCommand');
 
     let sendCommitBtn = document.getElementById('sendCommitBtn');
     let commitMsg     = document.getElementById("commitMsg");
@@ -87,6 +88,24 @@ window.addEventListener('DOMContentLoaded', (event) => {
         .catch(err => console.log(err));
     })
 
+
+    /**
+     * Get diff command
+     */
+    diffCommand.addEventListener('click', evt => {
+        evt.stopImmediatePropagation();
+        let defineFolder = document.getElementById('defaultFolder').value;
+        fetch('/commit/list', {
+            method: "POST",
+            body: JSON.stringify({folder: defineFolder}),
+            headers: {"Content-type": "application/json; charset=UTF-8"}
+        })
+        .then(response => response.json()) 
+        .then(({ content }) => {
+            console.log(content)
+        })
+        .catch(err => console.log(err));
+    })
 
     document.getElementById('exampleModal').addEventListener('hidden.bs.modal', function (event) {
         commitMsg.value = "";

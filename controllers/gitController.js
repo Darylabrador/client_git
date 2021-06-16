@@ -2,6 +2,8 @@ const { validationResult } = require("express-validator");
 const simpleGit            = require('simple-git');
 const fs                   = require('fs');
 const path                 = require('path');
+const { exec }             = require('child_process');
+
 
 /**
  * Git init Command
@@ -147,6 +149,48 @@ exports.gitPull = async (req, res, next) => {
         const err = new Error(error);
         err.httpStatusCode = 500;
         err.msg = "Il y a un problème de merge à résoudre";
+        next(err);
+    }
+}
+
+
+
+/**
+ * Git rev-list Command
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+exports.gitRevList = async (req, res, next) => {
+    const { folder } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            success: false,
+            message: errors.array()[0].msg
+        })
+    }
+
+    try {
+        await exec(`cd ${folder} & git rev-list --remotes`, (err, stdout, stderr) => {
+            let dataArray = stdout.split('\n');
+            let dataArrayFormated = [];
+            dataArray.forEach(element => {
+                if(element != "") {
+                    dataArrayFormated.push(element)
+                }
+            })
+            return res.status(200).json({
+                content: dataArrayFormated
+            })
+        });
+    } catch (error) {
+        console.log(error)
+        const err = new Error(error);
+        err.httpStatusCode = 500;
+        err.msg = "Aucun commit";
         next(err);
     }
 }

@@ -3,6 +3,7 @@
 
   <body>
     <input type="hidden" id="defaultFolder">
+    <input type="hidden" id="currentFile">
 
     <nav class="w-100 row no-gutters border-bottom border-light bg-secondary m-0">
       <div class="col-2 pt-2 pl-4">
@@ -30,9 +31,17 @@
     <div class="sidenav bg-secondary">
 
       <div class="d-flex justify-content-center mb-2 d-none" id="gitCommand">
-        <button class="btn btn-success" id="commitCommand" data-bs-toggle="modal" data-bs-target="#exampleModal"> Commit </button>
-        <button class="btn btn-danger mx-2" id="pushCommand"> Push </button>
-        <button class="btn btn-primary" id="pullCommand"> Pull </button>
+        <div class="row no-gutters">
+          <div class="col-12 m-1">
+            <button class="btn btn-success" id="commitCommand" data-bs-toggle="modal" data-bs-target="#exampleModal"> Commit </button>
+            <button class="btn btn-danger mx-2" id="pushCommand"> Push </button>
+            <button class="btn btn-primary" id="pullCommand"> Pull </button>
+          </div>
+
+          <div class="col-12 m-1">
+            <button class="btn btn-info" id="diffCommand"> Diff </button>
+          </div>
+        </div>
       </div>
 
       <h6 id="directoryNameDisplay" class="text-center fw-bold">Choisir le projet git</h6>
@@ -52,9 +61,18 @@
         <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#initModal"> Initialiser </button>
       </div>
 
+      <h6 id="fileName" class="text-center text-white my-2 d-none"> Aucun fichier sélectionner </h6>
+      <div class="d-flex justify-content-end">
+        <select id="selectCommit" class="mb-1 form-control form-select w-25 d-none"> </select>
+      </div>
+
       <div id="fileViewer" class="w-100 h-100 d-none">
-        <h6 id="fileName" class="text-center text-white my-4 d-none"> Aucun fichier sélectionner </h6>
         <textarea id="editor" class="text-white bg-dark border border-light d-none w-100 h-75 px-2 py-3"></textarea>
+      </div>
+
+      <div id="diffContainer" class="row no-gutters mx-1 d-none" style="height: 90% !important;">
+        <textarea id="localFile" disabled class="col-6 border border-dark bg-light h-100 px-1"></textarea>
+        <textarea id="commitFile" disabled class="col-6 border border-dark bg-light h-100 px-1"></textarea>
       </div>
     </div>
 

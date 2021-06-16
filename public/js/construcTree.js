@@ -23,6 +23,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     var modalRecent          = new bootstrap.Modal(document.getElementById('openRecentModal'))
 
+    let localFile            = document.getElementById("localFile");
+
+
     /**
      * Set folder name
      * @param {String} directoryName 
@@ -69,6 +72,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 evt.stopImmediatePropagation();
                 data = { filePath: pathFile }
 
+                document.getElementById('currentFile').value = pathFile;
+
                 fetch("/show/content", {
                     method: "POST",
                     body: JSON.stringify(data),
@@ -76,6 +81,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 })
                 .then(response => response.json()) 
                 .then(({ content }) => {
+                    localFile.value = content;
                     editor.value = content;
                     fileName.textContent = btn.getAttribute('data-name');
                     fileName.classList.remove('d-none');
@@ -91,6 +97,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         .then(response => response.json()) 
                         .then(({ content }) => {
                             editor.value = content;
+                            localFile.value = content;
                             fileName.textContent = btn.getAttribute('data-name');
                             fileName.classList.remove('d-none');
                             editor.classList.remove("d-none");

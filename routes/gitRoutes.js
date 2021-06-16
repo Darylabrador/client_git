@@ -101,4 +101,24 @@ router.post(
 );
 
 
+
+/**
+ * Git rev-list command
+ * 
+ * @name gitRevList POST
+ * @function
+ * @memberof module:router/git
+ * @param {string} '/commit/list' - uri
+ * @param {function} gitController.gitRevList
+ */
+ router.post(
+    "/commit/list",
+    [
+        body('folder', 'Chemin du fichier obligatoire')
+            .not()
+            .isEmpty()
+    ],
+    gitController.gitRevList
+);
+
 module.exports = router;
