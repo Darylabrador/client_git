@@ -1,5 +1,4 @@
 window.addEventListener('DOMContentLoaded', (event) => {
-    let originPath     = "";
     let data;
 
     let displayMessage = document.getElementById('displayMessage');
@@ -17,7 +16,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
     var modalResult = new bootstrap.Modal(document.getElementById('modalResult'))
     var modalInit   = new bootstrap.Modal(document.getElementById('initModal'))
 
-    
+    let defineFolder = document.getElementById('defaultFolder').value;
+
     /**
      * Disable commit button
      */
@@ -32,7 +32,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
      */
     initRepoBtn.addEventListener('click', evt => {
         evt.stopImmediatePropagation();
-        data = { folder: originPath, repoUrl: initRepoUrl.value }
+        data = { folder: defineFolder, repoUrl: initRepoUrl.value }
         fetch('/init', {
             method: "POST",
             body: JSON.stringify(data),
@@ -55,7 +55,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     sendCommitBtn.addEventListener('click', evt => {
         evt.stopPropagation();
         if (commitMsg.value != "") {
-            data = { message: commitMsg.value, folder: originPath }
+            data = { message: commitMsg.value, folder: defineFolder }
             fetch('/commit', {
                 method: "POST",
                 body: JSON.stringify(data),
@@ -80,7 +80,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         pushCommand.setAttribute('disabled', true);
         fetch('/push', {
             method: "POST",
-            body: JSON.stringify({folder: originPath}),
+            body: JSON.stringify({folder: defineFolder}),
             headers: {"Content-type": "application/json; charset=UTF-8"}
         })
         .then(response => response.json()) 
@@ -100,7 +100,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         pullCommand.setAttribute('disabled', true);
         fetch('/pull', {
             method: "POST",
-            body: JSON.stringify({folder: originPath}),
+            body: JSON.stringify({folder: defineFolder}),
             headers: {"Content-type": "application/json; charset=UTF-8"}
         })
         .then(response => response.json()) 

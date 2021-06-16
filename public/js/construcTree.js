@@ -171,7 +171,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         setDirectoryName(filteredTree.name);
                     } else {
                         if (directory.filePaths && directory.filePaths.length != 0) {
-                            localStorage.setItem("folderPath", directory.filePaths[0]);
+                            document.getElementById('defaultFolder').value = directory.filePaths[0];
+
                             originPath = directory.filePaths[0];
                             data = { folderPath: originPath }
         
@@ -220,7 +221,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 }) 
             }
         } else {
-            localStorage.setItem("folderPath", directoryPath);
+            document.getElementById('defaultFolder').value = directoryPath;
             originPath = directoryPath;
             data = { folderPath: originPath }
             fetch('/history/save', {
