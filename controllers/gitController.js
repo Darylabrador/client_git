@@ -26,7 +26,7 @@ exports.showFileContent = async (req, res, next) => {
     }
 
     try {
-        fs.readFile(filePath, 'utf8', (err, data) => {
+        fs.readFile(filePath, 'utf8', async (err, data) => {
             if (err) {
                 console.log(err)
                 return;

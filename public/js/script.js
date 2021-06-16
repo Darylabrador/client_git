@@ -9,6 +9,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
     let method, data;
     let originPath = "";
 
+    let historyOption = document.getElementById('historyOption');
+
     let gitCommand = document.getElementById('gitCommand');
     let pushCommand = document.getElementById('pushCommand');
     let pullCommand = document.getElementById('pullCommand');
@@ -28,6 +30,31 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     const setDirectoryName = (directoryName) => {
         directoryNameDisplay.textContent = directoryName;
+    }
+
+    const getHistory = () => {
+        method = "GET";
+        req.open(method, "/history");
+        req.responseType = "json";
+        req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
+        req.send(null);
+        req.onload = () => {
+            if (req.readyState === XMLHttpRequest.DONE) {
+                if (req.status === 200) {
+                    let reponse = req.response;
+                    console.log(reponse.history)
+                    let renderOption  = "";
+                    if(reponse.history && reponse.history.length != 0) {
+                        reponse.history.forEach(element => {
+                            let folderpathArray = element.path.split('\\');
+                            let folderName = folderpathArray[folderpathArray.length - 1]
+                            renderOption += `<option value=${element.path}> ${folderName}</option>`;
+                        })
+                        historyOption.innerHTML = renderOption;
+                    }
+                }
+            }
+        }
     }
 
     const openAction = (renderHtml, btnInfoPath, btnShowContent) => {
@@ -117,18 +144,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
         })
     }
 
-    openFolder.addEventListener("click", async (evt) => {
-        try {
-            gitCommand.classList.add('d-none');
-            fileName.textContent = defaultFileName;
-            fileName.classList.add('d-none');
-            editor.classList.add("d-none");
-            editor.value = "";
-
-            folderContent.innerHTML = "";
-            directoryNameDisplay.textContent = "Choisir le projet git";
-            loading.classList.remove('d-none');
-            invalideFolder.classList.add('d-none');
+    const openFolderContent = async (directoryPath = null) => {
+        if(!directoryPath) {
             let directory = await dialog.showOpenDialog({ properties: ['openDirectory'] });
 
             if (directory.canceled) {
@@ -149,6 +166,22 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             loading.classList.add('d-none');
                             invalideFolder.classList.add('d-none');
                             originPath = directory.filePaths[0];
+
+                            data = { folderPath: originPath }
+                            method = "POST";
+                            req.open(method, "/history/save");
+                            req.responseType = "json";
+                            req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
+                            req.send(JSON.stringify(data));
+                            req.onload = () => {
+                                if (req.readyState === XMLHttpRequest.DONE) {
+                                    if (req.status === 200) {
+                                        let reponse = req.response;
+                                        getHistory();
+                                    }
+                                }
+                            }
+
                             const filteredTree = dirTree(directory.filePaths[0]);
 
                             if (filteredTree) {
@@ -184,6 +217,73 @@ window.addEventListener('DOMContentLoaded', (event) => {
                     })
                 }
             }
+        } else {
+            loading.classList.add('d-none');
+            invalideFolder.classList.add('d-none');
+            originPath = directoryPath;
+
+            data = { folderPath: originPath }
+            method = "POST";
+            req.open(method, "/history/save");
+            req.responseType = "json";
+            req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
+            req.send(JSON.stringify(data));
+            req.onload = () => {
+                if (req.readyState === XMLHttpRequest.DONE) {
+                    if (req.status === 200) {
+                        let reponse = req.response;
+                        getHistory();
+                    }
+                }
+            }
+
+            const filteredTree = dirTree(directoryPath);
+
+            if (filteredTree) {
+                setDirectoryName(filteredTree.name);
+                gitCommand.classList.remove('d-none');
+                if (filteredTree.children) {
+                    let renderHtml = "";
+
+                    filteredTree.children.forEach(element => {
+                        if (element.type == "directory") {
+                            renderHtml += `
+                            <button class="btn text-white d-flex align-items-center fw-bold btnInfoPath" data-path="${element.path}">
+                                <span class="iconify" data-inline="false" data-icon="ant-design:folder-open-filled" style="color: #fff; font-size: 19px; margin-right: 5px;"></span>
+                                <span> ${element.name} </span>
+                            </button>
+                            <div class="subContent"></div>`;
+                        } else if (element.type == "file") {
+                            renderHtml += `
+                            <button class="btn text-white d-flex align-items-center btnShowContent" data-path="${element.path}" data-name="${element.name}">
+                                <span> ${element.name} </span>
+                            </button>
+                            <div class="subContent"></div>`;
+                        }
+                    });
+
+                    folderContent.innerHTML = renderHtml;
+                    let btnInfoPath = document.querySelectorAll('.btnInfoPath');
+                    let btnShowContent = document.querySelectorAll('.btnShowContent');
+                    openAction(renderHtml, btnInfoPath, btnShowContent);
+                }
+            }
+        }
+    }
+
+    openFolder.addEventListener("click", async (evt) => {
+        try {
+            gitCommand.classList.add('d-none');
+            fileName.textContent = defaultFileName;
+            fileName.classList.add('d-none');
+            editor.classList.add("d-none");
+            editor.value = "";
+
+            folderContent.innerHTML = "";
+            directoryNameDisplay.textContent = "Choisir le projet git";
+            loading.classList.remove('d-none');
+            invalideFolder.classList.add('d-none');
+            openFolderContent();
         } catch (error) {
             console.log(error)
         }
@@ -194,6 +294,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     var modalCommit = new bootstrap.Modal(document.getElementById('exampleModal'))
     var modalResult = new bootstrap.Modal(document.getElementById('modalResult'))
+    var modalRecent = new bootstrap.Modal(document.getElementById('openRecentModal'))
 
     commitCommand.addEventListener('click', evt => {
         evt.stopPropagation();
@@ -279,4 +380,26 @@ window.addEventListener('DOMContentLoaded', (event) => {
         pushCommand.removeAttribute("disabled");
         pullCommand.removeAttribute("disabled");
     })
+
+    document.getElementById('openRecentModal').addEventListener('show.bs.modal', function (event) {
+        gitCommand.classList.add('d-none');
+        fileName.textContent = defaultFileName;
+        fileName.classList.add('d-none');
+        editor.classList.add("d-none");
+        editor.value = "";
+
+        folderContent.innerHTML = "";
+        directoryNameDisplay.textContent = "Choisir le projet git";
+        loading.classList.remove('d-none');
+        invalideFolder.classList.add('d-none');
+    })
+
+    getHistory();
+
+    let openRecentBtn = document.getElementById('openRecentBtn');
+    openRecentBtn.addEventListener('click', evt => {
+        evt.stopPropagation();
+        openFolderContent(historyOption.value);
+        modalRecent.hide();
+    });
 });

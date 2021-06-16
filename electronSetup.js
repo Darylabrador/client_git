@@ -9,11 +9,12 @@ const bcrypt = require('bcryptjs');
 
 
 // Get all models
-const User = require('./models/User');
+const Repository = require('./models/Repository');
 
 // Routes handler
 const GeneralRoutes = require('./routes/index');
 const GitRoutes = require("./routes/gitRoutes");
+const HistoryRoutes = require("./routes/historyRoutes");
 
 
 /* variable initialisation's */
@@ -111,7 +112,8 @@ function loadRoutes(callback) {
     // Defines routes
     expressApp.use('/', GeneralRoutes);
     expressApp.use(GitRoutes);
-
+    expressApp.use(HistoryRoutes);
+    
     if (typeof callback != 'undefined') {
         callback();
     }

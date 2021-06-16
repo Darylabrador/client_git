@@ -37,7 +37,8 @@
 
       <div class="my-2">
         <div class="d-flex justify-content-center">
-          <button id="openFolder" type="button" class="btn py-0 px-3 btn-dark btn-sm">Ouvrir</button>
+          <button id="openFolder" type="button" class="btn py-0 px-3 btn-dark btn-sm mx-1">Ouvrir</button>
+          <button type="button" class="btn py-0 px-3 btn-dark btn-sm mx-1" data-bs-toggle="modal" data-bs-target="#openRecentModal">Récent</button>
         </div>
       </div>
 
@@ -96,6 +97,24 @@
       </div>
     </div>
 
+
+    <div class="modal fade" id="openRecentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2500;">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header d-flex justify-content-end">
+            <h5 class="modal-title" id="exampleModalLabel">Ouvert récemment</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <select class="form-control form-select" id="historyOption"></select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button type="button" class="btn btn-primary" id="openRecentBtn">Valider</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="/js/script.js"></script>
     <script type="module" src="/js/menuHandlerElectron.js"></script>
