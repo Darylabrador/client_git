@@ -28,8 +28,9 @@ exports.showFileContent = async (req, res, next) => {
     try {
         fs.readFile(filePath, 'utf8', async (err, data) => {
             if (err) {
-                const error = new Error('Impossible de lire le fichier');
+                const error = new Error(err);
                 error.httpStatusCode = 500;
+                error.msg = 'Impossible de lire le fichier';
                 throw error;
             }
             return res.status(200).json({
@@ -67,8 +68,9 @@ exports.saveContent = async (req, res, next) => {
     try {
         fs.writeFile(filePath, fileContent, (err) => {
             if (err) {
-                const error = new Error("Impossible d'écrire dans le fichier");
+                const error = new Error(err);
                 error.httpStatusCode = 500;
+                error.msg = "Impossible d'écrire dans le fichier";
                 throw error;
             }
         })
