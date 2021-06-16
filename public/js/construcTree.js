@@ -272,6 +272,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
      */
     openRecentBtn.addEventListener('click', evt => {
         evt.stopPropagation();
+        openRecentBtn.classList.add('d-none');
         openFolderContent(historyOption.value);
         modalRecent.hide();
     });
@@ -303,7 +304,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         fileName.classList.add('d-none');
         editor.classList.add("d-none");
         editor.value = "";
-
+        openRecentBtn.classList.remove('d-none');
         folderContent.innerHTML = "";
         directoryNameDisplay.textContent = "Choisir le projet git";
     })
@@ -329,6 +330,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     initRepoBtn.addEventListener('click', evt => {
         evt.stopImmediatePropagation();
+        initRepoBtn.setAttribute('disabled', true);
         let defineFolder = document.getElementById('defaultFolder').value;
 
         data = { folder: defineFolder, repoUrl: document.getElementById('initRepoUrl').value }
@@ -345,6 +347,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
             initModal.hide();
             initContainer.classList.add('d-none');
             fileViewer.classList.remove('d-none');
+            initRepoBtn.removeAttribute('disabled');
             openFolderContent(defineFolder)
         })
         .catch(err => console.log(err));

@@ -26,6 +26,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     sendCommitBtn.addEventListener('click', evt => {
         evt.stopPropagation();
         if (commitMsg.value != "") {
+            sendCommitBtn.setAttribute('disabled', true);
             let defineFolder = document.getElementById('defaultFolder').value;
             data = { message: commitMsg.value, folder: defineFolder }
             fetch('/commit', {
@@ -38,6 +39,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 displayMessage.textContent = message;
                 modalResult.show();
                 modalCommit.hide();
+                sendCommitBtn.removeAttribute('disabled')
             })
             .catch(err => console.log(err));
         }
