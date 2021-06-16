@@ -49,7 +49,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
             if (req.readyState === XMLHttpRequest.DONE) {
                 if (req.status === 200) {
                     let reponse = req.response;
-                    console.log(reponse.history)
                     let renderOption  = "";
                     if(reponse.history && reponse.history.length != 0) {
                         reponse.history.forEach(element => {
@@ -76,7 +75,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 
     /**
-     * Recursive function to open folder tree
+     * Recursive function to open folder tree (open all lvl folder)
      * 
      * @param {*} renderHtml 
      * @param {*} btnInfoPath 
@@ -113,7 +112,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             });
                         }
                     } else {
-                        console.log("une erreur est survenue")
+                        console.error("une erreur est survenue")
                     }
                 }
             })
@@ -164,7 +163,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 
     /**
-     * Show folder tree
+     * Show folder tree (first lvl)
      * @param {String} directoryPath 
      */
     const openFolderContent = async (directoryPath = null) => {
@@ -304,7 +303,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     
             openFolderContent();
         } catch (error) {
-            console.log(error)
+            console.error('Une erreur est survenue');
         }
     })
 
