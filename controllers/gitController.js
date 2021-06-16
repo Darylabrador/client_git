@@ -23,11 +23,11 @@ const simpleGit            = require('simple-git');
 
     try {
         const git    = await simpleGit(folder);
-        await git.init()
-                .add('./*')
-                .commit("first commit!")
-                .addRemote('origin', repoUrl)
-                .push('origin', 'main');
+        await git.init();
+        await git.add('./*');
+        await git.commit("first commit!");
+        await git.addRemote('origin', repoUrl);
+        await git.push('origin', 'main');
         await res.status(200).json({
             message: "Votre repo est initialisé"
         });
