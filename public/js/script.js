@@ -1,37 +1,44 @@
-const remote = require('electron').remote;
-const { dialog } = remote;
-const path = require('path');
-const fs = require('fs');
-const dirTree = require("directory-tree");
+const remote        = require('electron').remote;
+const { dialog }    = remote;
+const path          = require('path');
+const fs            = require('fs');
+const dirTree       = require("directory-tree");
 
 window.addEventListener('DOMContentLoaded', (event) => {
-    let req = new XMLHttpRequest();
+    let req         = new XMLHttpRequest();
+    let originPath  = "";
     let method, data;
-    let originPath = "";
 
-    let historyOption = document.getElementById('historyOption');
+    let defaultFileName      = "Aucun fichier sélectionner";
+    let displayMessage       = document.getElementById('displayMessage');
+    let historyOption        = document.getElementById('historyOption');
 
-    let gitCommand = document.getElementById('gitCommand');
-    let pushCommand = document.getElementById('pushCommand');
-    let pullCommand = document.getElementById('pullCommand');
-    let commitCommand = document.getElementById('commitCommand');
+    let gitCommand           = document.getElementById('gitCommand');
+    let pushCommand          = document.getElementById('pushCommand');
+    let pullCommand          = document.getElementById('pullCommand');
+    let commitCommand        = document.getElementById('commitCommand');
 
-    let fileName = document.getElementById('fileName');
-    let defaultFileName = "Aucun fichier sélectionner";
-    let editor = document.getElementById('editor');
-
-    let loading = document.getElementById('loading');
+    let openFolder           = document.getElementById("openFolder");
     let directoryNameDisplay = document.getElementById("directoryNameDisplay");
-    let invalideFolder = document.getElementById("invalideFolder");
-    let openFolder = document.getElementById("openFolder");
-    let folderContent = document.getElementById('folderContent');
+    let folderContent        = document.getElementById('folderContent');
+    let editor               = document.getElementById('editor');
+    let fileName             = document.getElementById('fileName');
+    
+    let openRecentBtn       = document.getElementById('openRecentBtn');
 
-    let displayMessage = document.getElementById('displayMessage');
 
+    /**
+     * Set folder name
+     * @param {String} directoryName 
+     */
     const setDirectoryName = (directoryName) => {
         directoryNameDisplay.textContent = directoryName;
     }
 
+
+    /**
+     * Get path history
+     */
     const getHistory = () => {
         method = "GET";
         req.open(method, "/history");
@@ -57,6 +64,24 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
+    
+    /**
+     * Handle open recent folders
+     */
+     openRecentBtn.addEventListener('click', evt => {
+        evt.stopPropagation();
+        openFolderContent(historyOption.value);
+        modalRecent.hide();
+    });
+
+
+    /**
+     * Recursive function to open folder tree
+     * 
+     * @param {*} renderHtml 
+     * @param {*} btnInfoPath 
+     * @param {*} btnShowContent 
+     */
     const openAction = (renderHtml, btnInfoPath, btnShowContent) => {
         btnShowContent.forEach(btn => {
             btn.addEventListener('click', evt => {
@@ -85,13 +110,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                 req.responseType = "json";
                                 req.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
                                 req.send(JSON.stringify(data));
-                                req.onload = () => {
-                                    if (req.readyState === XMLHttpRequest.DONE) {
-                                        if (req.status === 200) {
-                                            let reponse = req.response;
-                                        }
-                                    }
-                                }
                             });
                         }
                     } else {
@@ -144,12 +162,17 @@ window.addEventListener('DOMContentLoaded', (event) => {
         })
     }
 
+
+    /**
+     * Show folder tree
+     * @param {String} directoryPath 
+     */
     const openFolderContent = async (directoryPath = null) => {
         if(!directoryPath) {
             let directory = await dialog.showOpenDialog({ properties: ['openDirectory'] });
 
             if (directory.canceled) {
-                loading.classList.add('d-none');
+       
                 directoryNameDisplay.textContent = "Choisir le projet git";
                 folderContent.innerHTML = "";
                 gitCommand.classList.add('d-none');
@@ -159,12 +182,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
                     fs.access(path.join(directory.filePaths[0], ".git"), async function (error) {
                         if (error) {
                             folderContent.innerHTML = "";
-                            invalideFolder.classList.remove('d-none');
+
                             gitCommand.classList.add('d-none');
                             directoryNameDisplay.textContent = "Choisir le projet git";
                         } else {
-                            loading.classList.add('d-none');
-                            invalideFolder.classList.add('d-none');
                             originPath = directory.filePaths[0];
 
                             data = { folderPath: originPath }
@@ -176,7 +197,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             req.onload = () => {
                                 if (req.readyState === XMLHttpRequest.DONE) {
                                     if (req.status === 200) {
-                                        let reponse = req.response;
                                         getHistory();
                                     }
                                 }
@@ -218,10 +238,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 }
             }
         } else {
-            loading.classList.add('d-none');
-            invalideFolder.classList.add('d-none');
             originPath = directoryPath;
-
             data = { folderPath: originPath }
             method = "POST";
             req.open(method, "/history/save");
@@ -231,7 +248,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
             req.onload = () => {
                 if (req.readyState === XMLHttpRequest.DONE) {
                     if (req.status === 200) {
-                        let reponse = req.response;
                         getHistory();
                     }
                 }
@@ -271,6 +287,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
+
+    /**
+     * Handle click on "Open" to show folder tree
+     */
     openFolder.addEventListener("click", async (evt) => {
         try {
             gitCommand.classList.add('d-none');
@@ -281,8 +301,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
             folderContent.innerHTML = "";
             directoryNameDisplay.textContent = "Choisir le projet git";
-            loading.classList.remove('d-none');
-            invalideFolder.classList.add('d-none');
+    
             openFolderContent();
         } catch (error) {
             console.log(error)
@@ -296,11 +315,19 @@ window.addEventListener('DOMContentLoaded', (event) => {
     var modalResult = new bootstrap.Modal(document.getElementById('modalResult'))
     var modalRecent = new bootstrap.Modal(document.getElementById('openRecentModal'))
 
+
+    /**
+     * Disable commit button
+     */
     commitCommand.addEventListener('click', evt => {
         evt.stopPropagation();
         commitCommand.setAttribute('disabled', true);
     });
 
+
+    /**
+     * Action to send the commit with it's message
+     */
     sendCommitBtn.addEventListener('click', evt => {
         evt.stopPropagation();
         if (commitMsg.value != "") {
@@ -326,6 +353,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
     })
 
+
+    /**
+     * Action to push all commit to git repo
+     */
     pushCommand.addEventListener('click', evt => {
         evt.stopPropagation();
         pushCommand.setAttribute('disabled', true);
@@ -348,6 +379,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
     })
 
+
+    /**
+     * Action to pull data from git repo
+     */
     pullCommand.addEventListener('click', evt => {
         evt.stopPropagation();
         pullCommand.setAttribute('disabled', true);
@@ -390,16 +425,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
         folderContent.innerHTML = "";
         directoryNameDisplay.textContent = "Choisir le projet git";
-        loading.classList.remove('d-none');
-        invalideFolder.classList.add('d-none');
     })
 
     getHistory();
-
-    let openRecentBtn = document.getElementById('openRecentBtn');
-    openRecentBtn.addEventListener('click', evt => {
-        evt.stopPropagation();
-        openFolderContent(historyOption.value);
-        modalRecent.hide();
-    });
 });
