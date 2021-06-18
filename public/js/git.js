@@ -95,6 +95,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         .then(response => response.json()) 
         .then(({ content }) => {
             document.getElementById('localFile').value = content;
+            document.getElementById('editor').value = content;
         })
         .catch(err => console.log(err));
 
