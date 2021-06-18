@@ -67,28 +67,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
         .catch(err => console.log(err));
     })
 
-
-    /**
-     * Action to pull data from git repo
-     */
-    pullCommand.addEventListener('click', evt => {
-        evt.stopPropagation();
-        pullCommand.setAttribute('disabled', true);
-        let defineFolder = document.getElementById('defaultFolder').value;
-        fetch('/pull', {
-            method: "POST",
-            body: JSON.stringify({folder: defineFolder}),
-            headers: {"Content-type": "application/json; charset=UTF-8"}
-        })
-        .then(response => response.json()) 
-        .then(({ message }) => {
-            displayMessage.textContent = message;
-            modalResult.show();
-        })
-        .catch(err => console.log(err));
-    })
-
-
     let fileName2     = document.getElementById('fileName');
     let selectCommit  = document.getElementById('selectCommit');
     let fileViewer2   = document.getElementById('fileViewer');

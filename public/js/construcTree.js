@@ -363,6 +363,29 @@ window.addEventListener('DOMContentLoaded', (event) => {
         .catch(err => console.log(err));
     })
 
+
+    let pullCommand    = document.getElementById('pullCommand');
+
+    /**
+     * Action to pull data from git repo
+     */
+    pullCommand.addEventListener('click', evt => {
+        evt.stopPropagation();
+        pullCommand.setAttribute('disabled', true);
+        let defineFolder = document.getElementById('defaultFolder').value;
+        fetch('/pull', {
+            method: "POST",
+            body: JSON.stringify({folder: defineFolder}),
+            headers: {"Content-type": "application/json; charset=UTF-8"}
+        })
+        .then(response => response.json()) 
+        .then(({ message }) => {
+            openFolderContent(defineFolder)
+        })
+        .catch(err => console.log(err));
+    })
+
+
     document.getElementById('initModal').addEventListener('hidden.bs.modal', function (event) {
         document.getElementById('initRepoUrl').value = "";
     })
