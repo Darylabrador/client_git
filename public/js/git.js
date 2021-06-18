@@ -165,21 +165,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
         } else {
             document.getElementById('commitFile').value = "--";
         }
-
-        fetch('/commit/list', {
-            method: "POST",
-            body: JSON.stringify({folder: defineFolder}),
-            headers: {"Content-type": "application/json; charset=UTF-8"}
-        })
-        .then(response => response.json()) 
-        .then(({ content }) => {
-            let renduSelect = "<option value='start'>Sélectionner le commit</option>";
-            content.forEach(element => {
-                renduSelect += `<option value="${element}">${element}</option>`
-            });
-            selectCommit.innerHTML = renduSelect;
-        })
-        .catch(err => console.log(err));
     })
 
 
