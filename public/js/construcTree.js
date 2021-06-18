@@ -380,6 +380,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         })
         .then(response => response.json()) 
         .then(({ message }) => {
+            pullCommand.removeAttribute("disabled");
             openFolderContent(defineFolder)
         })
         .catch(err => console.log(err));

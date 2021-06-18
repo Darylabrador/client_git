@@ -113,6 +113,7 @@ exports.gitPush = async (req, res, next) => {
             message: "Votre répo git a été mise à jour"
         });
     } catch (error) {
+        console.log(error)
         const err = new Error(error);
         err.httpStatusCode = 500;
         err.msg = "Vous devez commit et pull d'abord";
@@ -142,10 +143,12 @@ exports.gitPull = async (req, res, next) => {
     try {
         const git  = await simpleGit(folder);
         await git.pull();
+
         await res.status(200).json({
             message: "Votre branch local a été mise à jour"
         });
     } catch (error) {
+        console.log(error)
         const err = new Error(error);
         err.httpStatusCode = 500;
         err.msg = "Il y a un problème de merge à résoudre";

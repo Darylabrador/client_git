@@ -97,7 +97,7 @@ router.post(
             .not()
             .isEmpty()
     ],
-    gitController.gitPush
+    gitController.gitPull
 );
 
 

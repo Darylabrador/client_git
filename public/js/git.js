@@ -3,7 +3,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     let displayMessage = document.getElementById('displayMessage');
     let pushCommand    = document.getElementById('pushCommand');
-    let pullCommand    = document.getElementById('pullCommand');
     let commitCommand  = document.getElementById('commitCommand');
     let diffCommand    = document.getElementById('diffCommand');
 
@@ -191,6 +190,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('modalResult').addEventListener('hidden.bs.modal', function (event) {
         displayMessage.textContent = "";
         pushCommand.removeAttribute("disabled");
-        pullCommand.removeAttribute("disabled");
     })
 });
