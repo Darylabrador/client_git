@@ -63,7 +63,7 @@
 
       <h6 id="fileName" class="text-center text-white my-2 d-none"> Aucun fichier sélectionner </h6>
       <div class="d-flex justify-content-end">
-        <select id="selectCommit" class="mb-1 form-control form-select w-25 d-none"> </select>
+        <select id="selectCommit" class="mb-1 form-control form-select d-none" style="width: 50% !important;"> </select>
       </div>
 
       <div id="fileViewer" class="w-100 h-100 d-none">
@@ -71,8 +71,8 @@
       </div>
 
       <div id="diffContainer" class="row no-gutters mx-1 d-none" style="height: 90% !important;">
-        <textarea id="localFile" disabled class="col-6 border border-dark bg-light h-100 px-1"></textarea>
-        <textarea id="commitFile" disabled class="col-6 border border-dark bg-light h-100 px-1"></textarea>
+        <textarea id="localFile" disabled class="col-6 border border-dark bg-light h-100 px-1">--</textarea>
+        <textarea id="commitFile" disabled class="col-6 border border-dark bg-light h-100 px-1">--</textarea>
       </div>
     </div>
 

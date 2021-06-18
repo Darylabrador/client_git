@@ -187,10 +187,41 @@ exports.gitRevList = async (req, res, next) => {
             })
         });
     } catch (error) {
-        console.log(error)
         const err = new Error(error);
         err.httpStatusCode = 500;
         err.msg = "Aucun commit";
+        next(err);
+    }
+}
+
+
+/**
+ * Git diff command
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+exports.gitDiff = async (req, res, next) => {
+    const { folder, filePath, commit } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            success: false,
+            message: errors.array()[0].msg
+        })
+    }
+
+    try {
+        await exec(`cd ${folder} & git diff ${commit} ${filePath}`, (err, stdout, stderr) => {
+            return res.status(200).json({
+                content: stdout
+            })
+        });
+    } catch (error) {
+        const err = new Error(error);
+        err.httpStatusCode = 500;
+        err.msg = "Aucun";
         next(err);
     }
 }

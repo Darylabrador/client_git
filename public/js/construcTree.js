@@ -73,7 +73,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 data = { filePath: pathFile }
 
                 document.getElementById('currentFile').value = pathFile;
-
+                document.getElementById('commitFile').value = "--";
+                
                 fetch("/show/content", {
                     method: "POST",
                     body: JSON.stringify(data),
@@ -242,6 +243,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
             const filteredTree = dirTree(directoryPath);
 
             if (filteredTree) {
+                fileViewer.classList.remove('d-none');
+                initContainer.classList.add('d-none');
                 setDirectoryName(filteredTree.name);
                 gitCommand.classList.remove('d-none');
                 if (filteredTree.children) {

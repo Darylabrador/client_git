@@ -121,4 +121,32 @@ router.post(
     gitController.gitRevList
 );
 
+
+/**
+ * Git dif command
+ * 
+ * @name gitDiff POST
+ * @function
+ * @memberof module:router/git
+ * @param {string} '/commit/diff' - uri
+ * @param {function} gitController.gitDiff
+ */
+ router.post(
+    "/commit/diff",
+    [
+        body('folder', 'Chemin du fichier obligatoire')
+            .not()
+            .isEmpty(),
+        body('filePath', 'Chemin du fichier obligatoire')
+            .not()
+            .isEmpty(),
+        body('commit', 'Information du commit obligatoire')
+            .not()
+            .isEmpty()
+    ],
+    gitController.gitDiff
+);
+
+
+
 module.exports = router;

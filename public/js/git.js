@@ -89,11 +89,24 @@ window.addEventListener('DOMContentLoaded', (event) => {
     })
 
 
+    let fileName2     = document.getElementById('fileName');
+    let selectCommit  = document.getElementById('selectCommit');
+    let fileViewer2   = document.getElementById('fileViewer');
+    let diffContainer = document.getElementById('diffContainer');
+    let commitFile    = document.getElementById('commitFile');
+
+
     /**
      * Get diff command
      */
     diffCommand.addEventListener('click', evt => {
         evt.stopImmediatePropagation();
+
+        fileName2.classList.remove("d-none");
+        selectCommit.classList.toggle('d-none');
+        fileViewer2.classList.toggle('d-none');
+        diffContainer.classList.toggle('d-none');
+
         let defineFolder = document.getElementById('defaultFolder').value;
         fetch('/commit/list', {
             method: "POST",
@@ -102,10 +115,43 @@ window.addEventListener('DOMContentLoaded', (event) => {
         })
         .then(response => response.json()) 
         .then(({ content }) => {
-            console.log(content)
+            let renduSelect = "<option value='start'>Sélectionner le commit</option>";
+            content.forEach(element => {
+                renduSelect += `<option value="${element}">${element}</option>`
+            });
+            selectCommit.innerHTML = renduSelect;
         })
         .catch(err => console.log(err));
     })
+
+
+
+    /**
+     * Retrive diff depending commit
+     */
+    selectCommit.addEventListener("change", evt => {
+        let dataCommit   = evt.currentTarget.value;
+        let currentFile  = document.getElementById('currentFile').value;
+        let defineFolder = document.getElementById('defaultFolder').value;
+
+        if(dataCommit != "start" && currentFile != "") {
+            fetch('/commit/diff', {
+                method: "POST",
+                body: JSON.stringify({folder: defineFolder, filePath: currentFile, commit: dataCommit}),
+                headers: {"Content-type": "application/json; charset=UTF-8"}
+            })
+            .then(response => response.json()) 
+            .then(({ content }) => {
+                console.log(content);
+                if(content) commitFile.value = content;
+            })
+            .catch(err => console.log(err));
+        } else {
+            document.getElementById('commitFile').value = "--";
+        }
+    });
+
+
 
     document.getElementById('exampleModal').addEventListener('hidden.bs.modal', function (event) {
         commitMsg.value = "";
