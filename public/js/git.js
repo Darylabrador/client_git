@@ -142,8 +142,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
             })
             .then(response => response.json()) 
             .then(({ content }) => {
-                console.log(content);
-                if(content) commitFile.value = content;
+                commitFile.value = content;
             })
             .catch(err => console.log(err));
         } else {
@@ -151,6 +150,43 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 
+
+    /**
+     * handle change to interactif gif diff
+     */
+    document.getElementById('localFile').addEventListener('change', evt => {
+        let currentFile  = document.getElementById('currentFile').value;
+        data = { filePath: currentFile, fileContent: evt.currentTarget.value }
+        fetch("/save", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {"Content-type": "application/json; charset=UTF-8"}
+        })
+        .then(response => response.json()) 
+        .then(() => {
+
+        })
+        .catch(err => console.log(err));
+
+        let dataCommit   = selectCommit.value;
+        let defineFolder = document.getElementById('defaultFolder').value;
+
+        if(dataCommit != "start" && currentFile != "") {
+            fetch('/commit/diff', {
+                method: "POST",
+                body: JSON.stringify({folder: defineFolder, filePath: currentFile, commit: dataCommit}),
+                headers: {"Content-type": "application/json; charset=UTF-8"}
+            })
+            .then(response => response.json()) 
+            .then(({ content }) => {
+                document.getElementById('commitFile').value = "--";
+                commitFile.value = content;
+            })
+            .catch(err => console.log(err));
+        } else {
+            document.getElementById('commitFile').value = "--";
+        }
+    })
 
 
     document.getElementById('exampleModal').addEventListener('hidden.bs.modal', function (event) {
