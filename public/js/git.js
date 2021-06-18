@@ -85,6 +85,19 @@ window.addEventListener('DOMContentLoaded', (event) => {
         fileViewer2.classList.toggle('d-none');
         diffContainer.classList.toggle('d-none');
 
+        let pathFile = document.getElementById('currentFile').value;
+
+        fetch("/show/content", {
+            method: "POST",
+            body: JSON.stringify({filePath: pathFile}),
+            headers: {"Content-type": "application/json; charset=UTF-8"}
+        })
+        .then(response => response.json()) 
+        .then(({ content }) => {
+            document.getElementById('localFile').value = content;
+        })
+        .catch(err => console.log(err));
+
         let defineFolder = document.getElementById('defaultFolder').value;
         fetch('/commit/list', {
             method: "POST",
