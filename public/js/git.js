@@ -141,8 +141,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
             headers: {"Content-type": "application/json; charset=UTF-8"}
         })
         .then(response => response.json()) 
-        .then(() => {
-
+        .then(({ content }) => {
+            document.getElementById('editor').value = content;
+            document.getElementById('localFile').value = content;
         })
         .catch(err => console.log(err));
 
