@@ -1,6 +1,6 @@
 # Ressource projet client git
 
-Ceci est la branch ressource contenant les dossiers : 
+Ceci est la branch ressource contenant les dossiers suivant : 
 
-- Manuel d'utilisation de l'application sous forme de vidéo
-- Les tests
+- Démonstrations : Manuel d'utilisation de l'application sous forme de vidéo
+- Procédures de test : Les tests
